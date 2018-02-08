@@ -44,19 +44,19 @@ for z in x.symbols():
     if 'earnings' not in se:
         print("earnings is NA")
         continue
-    if not se['earnings'][0]['estimatedEPS']:
-        print("estimatedEPS is null, ({})".format(se['earnings'][0]['estimatedEPS']))
+    if not se['earnings'][0]['actualEPS']:
+        print("actualEPS is null, ({})".format(se['earnings'][0]['actualEPS']))
         continue
-    if se['earnings'][0]['estimatedEPS'] < 0:
-        print("estimatedEPS is negative, ({})".format(se['earnings'][0]['estimatedEPS']))
+    if se['earnings'][0]['actualEPS'] < 0:
+        print("estimatedEPS is negative, ({})".format(se['earnings'][0]['actualEPS']))
         continue
     if 'latestPrice' not in sq:
         print("latestPrice is NA")
         continue
-    sqdse = sq['latestPrice'] / se['earnings'][0]['estimatedEPS']
+    sqdse = sq['latestPrice'] / se['earnings'][0]['actualEPS']
     ## lets check for sure [0] object is actually the latest earnings report
     if sqdse > 15:
-        print("latestPrice / estimatedEPS is more then 15 ({}).".format(sqdse))
+        print("latestPrice / actualEPS is more then 15 ({}).".format(sqdse))
         continue
     ## ALL good print this
     print(jobj['companyName'], jobj['marketcap'], ddm, sqdse)
