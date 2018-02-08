@@ -21,12 +21,20 @@ class IEX:
     def symbols_count(self):
         return len(self.symbols_list())
 
-    def stocksKeyStats(self, symbol):
-        url = '{}/stock/{}/stats'.format(URL, symbol)
+    def stocksEarnings(self, symbol):
+        url = '{}/stock/{}/earnings'.format(URL, symbol)
         return self.get_data(url)
 
     def stocksFinancials(self, symbol):
         url = '{}/stock/{}/financials'.format(URL, symbol)
+        return self.get_data(url)
+
+    def stocksKeyStats(self, symbol):
+        url = '{}/stock/{}/stats'.format(URL, symbol)
+        return self.get_data(url)
+
+    def stocksQuote(self, symbol):
+        url = '{}/stock/{}/quote'.format(URL, symbol)
         return self.get_data(url)
 
 if __name__ == '__main__':
