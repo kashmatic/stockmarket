@@ -11,14 +11,17 @@ for z in x.symbols():
     jobj = x.stocksKeyStats(z)
     print(z, end="\t")
     ## Criteria 1: More than 1 billion
+    if marketcap not in jobj:
+        print("marketcap is NA")
+        continue
     if jobj['marketcap'] < 1000000000:
         print("marketcap is less than 1 billion, (${:,.2f})".format(jobj['marketcap']))
         continue
-    ## Criteria 2: debt is N/A
+    ## Criteria 2: debt should not be N/A or 0
     if jobj['debt'] == 0:
         print("debt is N/A in the data. ({})".format(jobj['debt']))
         continue
-    ## Criteria 3: debt to marketcap ratio
+    ## Criteria 3: debt to marketcap ratio must be less than 0.5
     ddm = jobj['debt'] / jobj['marketcap']
     if ddm > 0.5:
         print("debt to marketcap ratio is less than 50% ({})".format(ddm))
