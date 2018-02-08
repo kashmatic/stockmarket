@@ -12,7 +12,7 @@ for z in x.symbols():
     print(z, end="\t")
     ## Criteria 1: More than 1 billion
     if jobj['marketcap'] < 1000000000:
-        print("marketcap is less than 1 billion, ({})".format(jobj['marketcap']))
+        print("marketcap is less than 1 billion, (${:,.2f})".format(jobj['marketcap']))
         continue
     ## Criteria 2: debt is N/A
     if jobj['debt'] == 0:
@@ -25,7 +25,7 @@ for z in x.symbols():
         continue
     ## Criterian 4: Cash is more than 1 billion
     if jobj['cash'] < 1000000000:
-        print("Cash is less then 1B, ({})".format(jobj['cash']))
+        print("Cash is less then 1B, (${:,.2f})".format(jobj['cash']))
         continue
     ## Criteria 5: quote price / estimatedEPS
     sq = x.stocksQuote(z)
