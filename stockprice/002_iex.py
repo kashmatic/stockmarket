@@ -8,6 +8,8 @@ x = IEX()
 # print(x.symbols_count())
 
 for z in x.symbols():
+    if z[0].lower() in ['a', 'b', 'c', 'd', 'e', 'f', 'g']:
+        continue
     jobj = x.stocksKeyStats(z)
     print(z, end="\t")
     ## Criteria 1: More than 1 billion
