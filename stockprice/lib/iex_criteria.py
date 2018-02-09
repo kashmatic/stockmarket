@@ -5,6 +5,13 @@ class IexCriteria:
         self.stocksFinancials = stocksFinancials
         self.stocksKeyStats = stocksKeyStats
         self.stocksQuote = stocksQuote
+        self.valuation = dic(
+            marketcapMoreThan1B=False,
+            debtRatioMarketcap=False,
+            cashMoreThan1B=False,
+            quotePriceRatioEstimatedEPS=False,
+            score=0
+        )
 
     def marketcapMoreThan1B(self):
         if 'marketcap' not in self.stocksKeyStats:
@@ -12,6 +19,8 @@ class IexCriteria:
         if self.stocksKeyStats['marketcap'] < 1000000000:
             return False, "marketcap < 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
         ## True
+        self.valuation['marketcapMoreThan1B'] = True
+        self.valuation['score'] += 1
         return True, "marketcap > 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
 
     def debtRatioMarketcap(self):
@@ -23,6 +32,8 @@ class IexCriteria:
         if ratio > 0.5:
             return False, "debt to marketcap ratio > 50%\t{:,.2f}%".format(ratio*100)
         ## True
+        self.valuation['debtRatioMarketcap'] = True
+        self.valuation['score'] += 1
         return True, "debt to marketcap ratio < 50%\t{:,.2f}%".format(ratio * 100)
 
     def cashMoreThan1B(self):
@@ -31,6 +42,8 @@ class IexCriteria:
         if self.stocksKeyStats['cash'] < 1000000000:
             return False, "cash < 1B\t${:,.2f}".format(self.stocksKeyStats['cash'])
         ## True
+        self.valuation['cashMoreThan1B'] = True
+        self.valuation['score'] += 1
         return True, "cash > 1B\t${:,.2f}".format(self.stocksKeyStats['cash'])
 
     def quotePriceRatioEstimatedEPS(self):
@@ -46,18 +59,26 @@ class IexCriteria:
         if ratio > 15:
             return False, "latestPrice / actualEPS > 15\t{:,.2f}%".format(ratio)
         ## True
+        self.valuation['quotePriceRatioEstimatedEPS'] = True
+        self.valuation['score'] += 1
         return True, "latestPrice / actualEPS < 15\t{:,.2f}%".format(ratio)
 
     def validate(self):
+        if self.valuation['score'] > 3:
+            return True
+
         abool, msg = self.marketcapMoreThan1B()
         if not abool:
             return "{}\t{}\n".format(self.symbol, msg)
+
         abool, msg = self.debtRatioMarketcap()
         if not abool:
             return "{}\t{}\n".format(self.symbol, msg)
+
         abool, msg = self.cashMoreThan1B()
         if not abool:
             return "{}\t{}\n".format(self.symbol, msg)
+
         abool, msg = self.quotePriceRatioEstimatedEPS()
         if not abool:
             return "{}\t{}\n".format(self.symbol, msg)

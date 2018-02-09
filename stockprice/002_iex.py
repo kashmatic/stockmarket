@@ -59,7 +59,7 @@ for z in x.symbols():
         print("latestPrice / actualEPS is more then 15 ({}).".format(sqdse))
         continue
     ## ALL good print this
-    print(jobj['companyName'], jobj['marketcap'], ddm, sqdse)
+    print(jobj['companyName'], jobj['marketcap'], jobj['cash'], ddm, sqdse)
     print('*'*100)
     # select: few keys
     # condition: if something > anotherthing

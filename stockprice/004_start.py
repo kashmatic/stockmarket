@@ -20,23 +20,26 @@ async def mycoroutine(id):
         # print(dir(session))
         async with session.get("https://api.iextrading.com/1.0/stock/{}/financials".format(id)) as response:
             stocksFinancials = await response.json()
+    async with ClientSession() as session:
         async with session.get("https://api.iextrading.com/1.0/stock/{}/earnings".format(id)) as response:
             stocksEarnings = await response.json()
+    async with ClientSession() as session:
         async with session.get("https://api.iextrading.com/1.0/stock/{}/stats".format(id)) as response:
             stocksKeyStats = await response.json()
+    async with ClientSession() as session:
         async with session.get("https://api.iextrading.com/1.0/stock/{}/quote".format(id)) as response:
             stocksQuote = await response.json()
-        aobj = IexCriteria(id, stocksEarnings, stocksFinancials, stocksKeyStats, stocksQuote)
-        OUTPUT.write(aobj.validate())
+    # aobj = IexCriteria(id, stocksEarnings, stocksFinancials, stocksKeyStats, stocksQuote)
+    # OUTPUT.write(aobj.validate())
         # ALIST.append(aobj.validate())
-        session.close()
+        # session.close()
 
 async def todo():
     tasks = []
     # for id in ['CTRL', 'CTRN', 'CTRP', 'CTRV', 'CTS', 'CTSH', 'CTSO', 'CTT', 'CTU', 'CTV', 'CTW', 'CTWS', 'CTX', 'CTXR', 'CTXRW', 'CTXS', 'CTY', 'CTZ', 'CUB', 'CUBA']:
     for id in get_symbols():
-        atime = random.randint(1,10)
-        await asyncio.sleep(atime)
+        # atime = random.randint(1,10)
+        # await asyncio.sleep(atime/10)
         # tasks.append(asyncio.ensure_future(mycoroutine(id)))
         tasks.append(asyncio.ensure_future(mycoroutine(id['symbol'])))
 
