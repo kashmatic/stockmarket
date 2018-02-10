@@ -13,31 +13,31 @@ class IexCriteria:
             score=0
         )
 
-    def marketcapMoreThan1B(self):
+    def marketcapMoreThan1B(self, dollars):
         if 'marketcap' not in self.stocksKeyStats:
             return False, "marketcap is N/A"
-        if self.stocksKeyStats['marketcap'] < 1000000000:
+        if self.stocksKeyStats['marketcap'] < dollars:
             return False, "marketcap < 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
         ## True
         self.valuation['marketcapMoreThan1B'] = self.stocksKeyStats['marketcap']
         return True, "marketcap > 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
 
-    def debtRatioMarketcap(self):
+    def debtRatioMarketcap(self, limit):
         if 'debt' not in self.stocksKeyStats:
             return False, "debt is N/A or 0"
         if self.stocksKeyStats['debt'] <= 0:
             return False, "debt is N/A or 0\t{}".format(self.stocksKeyStats['debt'])
         ratio = self.stocksKeyStats['debt'] / self.stocksKeyStats['marketcap']
-        if ratio > 0.5:
+        if ratio > limit:
             return False, "debt to marketcap ratio > 50%\t{:,.2f}%".format(ratio*100)
         ## True
         self.valuation['debtRatioMarketcap'] = ratio
         return True, "debt to marketcap ratio < 50%\t{:,.2f}%".format(ratio * 100)
 
-    def cashMoreThan1B(self):
+    def cashMoreThan1B(self, dollars):
         if 'cash' not in self.stocksKeyStats:
             return False, "cash is N/A"
-        if self.stocksKeyStats['cash'] < 1000000000:
+        if self.stocksKeyStats['cash'] < dollars:
             return False, "cash < 1B\t${:,.2f}".format(self.stocksKeyStats['cash'])
         ## True
         self.valuation['cashMoreThan1B'] = self.stocksKeyStats['cash']
@@ -59,7 +59,7 @@ class IexCriteria:
         self.valuation['quotePriceRatioEstimatedEPS'] = ratio
         return True, "latestPrice / actualEPS < 15\t{:,.2f}".format(ratio)
 
-    def trailingPECalculate(self):
+    def trailingPECalculate(self, limit):
         alist = []
         if 'sharesOutstanding' not in self.stocksKeyStats:
             return False, "sharesOutstanding is N/A"
@@ -70,7 +70,7 @@ class IexCriteria:
         # x = sum(alist)/len(alist)
         basicEPS = sum(alist) / self.stocksKeyStats['sharesOutstanding']
         trailingPE = self.stocksQuote['delayedPrice'] / basicEPS
-        if trailingPE > 15 or trailingPE < 0:
+        if trailingPE > limit or trailingPE < 0:
             return False, "feCalculate > 15\t{:,.2f}".format(trailingPE)
         ## True
         self.valuation['feCalculate'] = trailingPE
@@ -78,14 +78,14 @@ class IexCriteria:
 
     def validate(self):
         fnlist = [
-            self.marketcapMoreThan1B,
-            self.debtRatioMarketcap,
-            self.cashMoreThan1B,
-            self.trailingPECalculate
+            self.marketcapMoreThan1B(1000000000),
+            self.debtRatioMarketcap(0.5),
+            self.cashMoreThan1B(1000000000),
+            self.trailingPECalculate(15)
         ]
 
         for fn in fnlist:
-            abool, msg = fn()
+            abool, msg = fn
             if not abool:
                 return abool, msg
                 # return "{}\t{}\n".format(self.symbol, msg)
