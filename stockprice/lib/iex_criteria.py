@@ -6,10 +6,11 @@ class IexCriteria:
         self.stocksKeyStats = stocksKeyStats
         self.stocksQuote = stocksQuote
         self.valuation = dict(
-            marketcapMoreThan1B=False,
-            debtRatioMarketcap=False,
-            cashMoreThan1B=False,
-            quotePriceRatioEstimatedEPS=False,
+            marketcapMoreThan1B=0,
+            debtRatioMarketcap=0,
+            cashMoreThan1B=0,
+            quotePriceRatioEstimatedEPS=0,
+            feCalculate=0,
             score=0
         )
 
@@ -19,8 +20,7 @@ class IexCriteria:
         if self.stocksKeyStats['marketcap'] < 1000000000:
             return False, "marketcap < 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
         ## True
-        self.valuation['marketcapMoreThan1B'] = True
-        self.valuation['score'] += 1
+        self.valuation['marketcapMoreThan1B'] = self.stocksKeyStats['marketcap']
         return True, "marketcap > 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
 
     def debtRatioMarketcap(self):
@@ -32,8 +32,7 @@ class IexCriteria:
         if ratio > 0.5:
             return False, "debt to marketcap ratio > 50%\t{:,.2f}%".format(ratio*100)
         ## True
-        self.valuation['debtRatioMarketcap'] = True
-        self.valuation['score'] += 1
+        self.valuation['debtRatioMarketcap'] = ratio
         return True, "debt to marketcap ratio < 50%\t{:,.2f}%".format(ratio * 100)
 
     def cashMoreThan1B(self):
@@ -42,8 +41,7 @@ class IexCriteria:
         if self.stocksKeyStats['cash'] < 1000000000:
             return False, "cash < 1B\t${:,.2f}".format(self.stocksKeyStats['cash'])
         ## True
-        self.valuation['cashMoreThan1B'] = True
-        self.valuation['score'] += 1
+        self.valuation['cashMoreThan1B'] = self.stocksKeyStats['cash']
         return True, "cash > 1B\t${:,.2f}".format(self.stocksKeyStats['cash'])
 
     def quotePriceRatioEstimatedEPS(self):
@@ -57,26 +55,36 @@ class IexCriteria:
             return False, "latestPrice is NA"
         ratio = self.stocksEarnings['latestPrice'] / self.stocksQuote['earnings'][0]['actualEPS']
         if ratio > 15:
-            return False, "latestPrice / actualEPS > 15\t{:,.2f}%".format(ratio)
+            return False, "latestPrice / actualEPS > 15\t{:,.2f}".format(ratio)
         ## True
-        self.valuation['quotePriceRatioEstimatedEPS'] = True
-        self.valuation['score'] += 1
-        return True, "latestPrice / actualEPS < 15\t{:,.2f}%".format(ratio)
+        self.valuation['quotePriceRatioEstimatedEPS'] = ratio
+        return True, "latestPrice / actualEPS < 15\t{:,.2f}".format(ratio)
+
+    def feCalculate(self):
+        alist = []
+        for report in self.stocksFinancials['financials']:
+            alist.append(report['netIncome'])
+        # x = sum(alist)/len(alist)
+        x = sum(alist) / self.stocksKeyStats['sharesOutstanding']
+        y = x / self.stocksQuote['delayedPrice']
+        if y > 15:
+            return False, "feCalculate < 15\t{:,.2f}".format(y)
+        ## True
+        self.valuation['feCalculate'] = ratio
+        return True, "feCalculate > 15\t{:,.2f}".format(y)
 
     def validate(self):
-        abool, msg = self.marketcapMoreThan1B()
-        if not abool:
-            return "{}\t{}\n".format(self.symbol, msg)
+        fnlist = [self.marketcapMoreThan1B,
+            self.debtRatioMarketcap,
+            self.cashMoreThan1B,
+            self.quotePriceRatioEstimatedEPS,
+            self.feCalculate]
 
-        abool, msg = self.debtRatioMarketcap()
-        if not abool:
-            return "{}\t{}\n".format(self.symbol, msg)
+        for fn in fnlist:
+            abool, msg = fn()
+            if not abool:
+                return abool, msg
+                # return "{}\t{}\n".format(self.symbol, msg)
 
-        abool, msg = self.cashMoreThan1B()
-        if not abool:
-            return "{}\t{}\n".format(self.symbol, msg)
-
-        abool, msg = self.quotePriceRatioEstimatedEPS()
-        if not abool:
-            return "{}\t{}\n".format(self.symbol, msg)
-        return "{}\n".format('*'*50)
+        return True, self.valuation
+        # return "{}\t{}\n".format(self.symbol, self.valuation)
