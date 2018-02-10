@@ -9,7 +9,7 @@ class IexCriteria:
             marketcapMoreThan1B=0,
             debtRatioMarketcap=0,
             cashMoreThan1B=0,
-            feCalculate=0,
+            trailingPECalculate=0,
             score=0
         )
 
@@ -59,7 +59,7 @@ class IexCriteria:
         self.valuation['quotePriceRatioEstimatedEPS'] = ratio
         return True, "latestPrice / actualEPS < 15\t{:,.2f}".format(ratio)
 
-    def feCalculate(self):
+    def trailingPECalculate(self):
         alist = []
         if 'sharesOutstanding' not in self.stocksKeyStats:
             return False, "sharesOutstanding is N/A"
@@ -70,7 +70,7 @@ class IexCriteria:
         # x = sum(alist)/len(alist)
         basicEPS = sum(alist) / self.stocksKeyStats['sharesOutstanding']
         trailingPE = self.stocksQuote['delayedPrice'] / basicEPS
-        if trailingPE > 15:
+        if trailingPE > 15 or trailingPE < 0:
             return False, "feCalculate > 15\t{:,.2f}".format(trailingPE)
         ## True
         self.valuation['feCalculate'] = trailingPE
@@ -81,7 +81,7 @@ class IexCriteria:
             self.marketcapMoreThan1B,
             self.debtRatioMarketcap,
             self.cashMoreThan1B,
-            self.feCalculate
+            self.trailingPECalculate
         ]
 
         for fn in fnlist:
