@@ -63,6 +63,8 @@ class IexCriteria:
         alist = []
         if 'sharesOutstanding' not in self.stocksKeyStats:
             return False, "sharesOutstanding is N/A"
+        if self.stocksKeyStats['sharesOutstanding'] == 0:
+            return False, "sharesOutstanding is 0"
         for report in self.stocksFinancials['financials']:
             if not report['netIncome']:
                 return False, "netIncome is N/A"
