@@ -9,7 +9,8 @@ class IexCriteria:
             marketcapMoreThan1B=0,
             debtRatioMarketcap=0,
             cashMoreThan1B=0,
-            trailingPECalculate=0,
+            peCalculate=0,
+            ebitda=0
             score=0
         )
 
@@ -77,17 +78,27 @@ class IexCriteria:
         basicEPS = sum(alist) / self.stocksKeyStats['sharesOutstanding']
         trailingPE = self.stocksQuote['delayedPrice'] / basicEPS
         if trailingPE > limit or trailingPE < 0:
-            return False, "feCalculate > 15\t{:,.2f}".format(trailingPE)
+            return False, "peCalculate > 15\t{:,.2f}".format(trailingPE)
         ## True
-        self.valuation['feCalculate'] = trailingPE
-        return True, "feCalculate < 15\t{:,.2f}".format(trailingPE)
+        self.valuation['peCalculate'] = trailingPE
+        return True, "peCalculate < 15\t{:,.2f}".format(trailingPE)
+
+    def ebitda(self, num):
+        if 'EBITDA' not in self.stocksKeyStats:
+            return False, "EBITDA is N/A"
+        if self.stocksKeyStats['EBITDA'] < num:
+            return False, "EBITDA < {}\t{}".format(num, self.stocksKeyStats['EBITDA'])
+        ## TRUE
+        self.valuation['ebitda'] = self.stocksKeyStats['EBITDA']
+        return True, "EBITDA > {}\t{}".format(num, self.stocksKeyStats['EBITDA'])
 
     def validate(self):
         fnlist = [
             self.marketcapMoreThan1B(1000000000),
             self.debtRatioMarketcap(0.5),
             self.cashMoreThan1B(1000000000),
-            self.trailingPECalculate(15)
+            self.trailingPECalculate(15),
+            self.ebitda(1)
         ]
 
         for fn in fnlist:
