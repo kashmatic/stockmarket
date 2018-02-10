@@ -10,7 +10,7 @@ class IexCriteria:
             debtRatioMarketcap=0,
             cashMoreThan1B=0,
             peCalculate=0,
-            ebitda=0
+            ebitda=0,
             score=0
         )
 
