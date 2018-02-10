@@ -8,8 +8,8 @@ db = client['stocks']
 iex = IEX()
 
 for sym in iex.symbols():
-    if not sym.startswith('A'):
-        continue
+    # if not sym.startswith('A'):
+    #     continue
     print(sym)
     stocksEarnings = iex.stocksEarnings(sym)
     stocksFinancials = iex.stocksFinancials(sym)
