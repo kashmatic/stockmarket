@@ -70,6 +70,8 @@ class IexCriteria:
                 return False, "netIncome is N/A"
             alist.append(report['netIncome'])
         # x = sum(alist)/len(alist)
+        if sum(alist) <= 0:
+            return False, "sum of netIncome <= 0"
         basicEPS = sum(alist) / self.stocksKeyStats['sharesOutstanding']
         trailingPE = self.stocksQuote['delayedPrice'] / basicEPS
         if trailingPE > limit or trailingPE < 0:
