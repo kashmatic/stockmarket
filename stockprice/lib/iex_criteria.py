@@ -61,6 +61,8 @@ class IexCriteria:
 
     def feCalculate(self):
         alist = []
+        if 'sharesOutstanding' not in self.stocksKeyStats:
+            return False, "sharesOutstanding is N/A"
         for report in self.stocksFinancials['financials']:
             alist.append(report['netIncome'])
         # x = sum(alist)/len(alist)
