@@ -8,12 +8,14 @@ db = client['stocks']
 iex = IEX()
 
 for sym in iex.symbols():
+    if not sym.startswith('A'):
+        continue
     print(sym)
     stocksEarnings = iex.stocksEarnings(sym)
-    db[sym].insert({'stocksEarnings': stocksEarnings})
     stocksFinancials = iex.stocksFinancials(sym)
-    db[sym].insert({'stocksFinancials': stocksFinancials})
     stocksKeyStats = iex.stocksKeyStats(sym)
-    db[sym].insert({'stocksKeyStats': stocksKeyStats})
     stocksQuote = iex.stocksQuote(sym)
-    db[sym].insert({'stocksQuote': stocksQuote})
+    db[sym].insert({'stocksKeyStats': stocksKeyStats,
+        'stocksFinancials': stocksFinancials,
+        'stocksEarnings': stocksEarnings,
+        'stocksQuote': stocksQuote})

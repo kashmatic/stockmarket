@@ -5,7 +5,7 @@ class IexCriteria:
         self.stocksFinancials = stocksFinancials
         self.stocksKeyStats = stocksKeyStats
         self.stocksQuote = stocksQuote
-        self.valuation = dic(
+        self.valuation = dict(
             marketcapMoreThan1B=False,
             debtRatioMarketcap=False,
             cashMoreThan1B=False,
@@ -64,9 +64,6 @@ class IexCriteria:
         return True, "latestPrice / actualEPS < 15\t{:,.2f}%".format(ratio)
 
     def validate(self):
-        if self.valuation['score'] > 3:
-            return True
-
         abool, msg = self.marketcapMoreThan1B()
         if not abool:
             return "{}\t{}\n".format(self.symbol, msg)
