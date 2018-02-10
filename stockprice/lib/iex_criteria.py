@@ -35,13 +35,13 @@ class IexCriteria:
         return True, "debt to marketcap ratio < 50%\t{:,.2f}%".format(ratio * 100)
 
     def cashMoreThan1B(self, dollars):
-        if 'cash' not in self.stocksKeyStats:
-            return False, "cash is N/A"
-        if self.stocksKeyStats['cash'] < dollars:
-            return False, "cash < 1B\t${:,.2f}".format(self.stocksKeyStats['cash'])
+        if 'currentCash' not in self.stocksFinancials:
+            return False, "currentCash is N/A"
+        if self.stocksFinancials['currentCash'] < dollars:
+            return False, "currentCash < 1B\t${:,.2f}".format(self.stocksFinancials['cash'])
         ## True
-        self.valuation['cashMoreThan1B'] = self.stocksKeyStats['cash']
-        return True, "cash > 1B\t${:,.2f}".format(self.stocksKeyStats['cash'])
+        self.valuation['cashMoreThan1B'] = self.stocksstocksFinancialsKeyStats['cash']
+        return True, "currentCash > 1B\t${:,.2f}".format(self.stocksFinancials['cash'])
 
     def quotePriceRatioEstimatedEPS(self):
         if 'earnings' not in self.stocksQuote:
