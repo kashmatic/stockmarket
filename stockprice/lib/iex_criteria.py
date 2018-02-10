@@ -64,6 +64,8 @@ class IexCriteria:
         if 'sharesOutstanding' not in self.stocksKeyStats:
             return False, "sharesOutstanding is N/A"
         for report in self.stocksFinancials['financials']:
+            if not report['netIncome']:
+                return False, "netIncome is N/A"
             alist.append(report['netIncome'])
         # x = sum(alist)/len(alist)
         basicEPS = sum(alist) / self.stocksKeyStats['sharesOutstanding']
