@@ -9,7 +9,6 @@ class IexCriteria:
             marketcapMoreThan1B=0,
             debtRatioMarketcap=0,
             cashMoreThan1B=0,
-            quotePriceRatioEstimatedEPS=0,
             feCalculate=0,
             score=0
         )
@@ -65,20 +64,21 @@ class IexCriteria:
         for report in self.stocksFinancials['financials']:
             alist.append(report['netIncome'])
         # x = sum(alist)/len(alist)
-        x = sum(alist) / self.stocksKeyStats['sharesOutstanding']
-        y = x / self.stocksQuote['delayedPrice']
-        if y > 15:
-            return False, "feCalculate < 15\t{:,.2f}".format(y)
+        basicEPS = sum(alist) / self.stocksKeyStats['sharesOutstanding']
+        trailingPE = self.stocksQuote['delayedPrice'] / basicEPS
+        if trailingPE > 15:
+            return False, "feCalculate > 15\t{:,.2f}".format(trailingPE)
         ## True
-        self.valuation['feCalculate'] = ratio
-        return True, "feCalculate > 15\t{:,.2f}".format(y)
+        self.valuation['feCalculate'] = trailingPE
+        return True, "feCalculate < 15\t{:,.2f}".format(trailingPE)
 
     def validate(self):
-        fnlist = [self.marketcapMoreThan1B,
+        fnlist = [
+            self.marketcapMoreThan1B,
             self.debtRatioMarketcap,
             self.cashMoreThan1B,
-            self.quotePriceRatioEstimatedEPS,
-            self.feCalculate]
+            self.feCalculate
+        ]
 
         for fn in fnlist:
             abool, msg = fn()
