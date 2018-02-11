@@ -30,7 +30,7 @@ class IexCriteria:
             return False, "debt is N/A or 0\t{}".format(self.self.stocksKeyStats['debt'])
         if self.stocksKeyStats['marketcap'] <= 0:
             return False, "marketcap <= 0"
-        ratio = self.self.stocksKeyStats['debt'] / self.stocksKeyStats['marketcap']
+        ratio = self.stocksKeyStats['debt'] / self.stocksKeyStats['marketcap']
         if ratio > limit:
             return False, "debt to marketcap ratio > {:,.2f}%\t{:,.2f}%".format(limit * 100, ratio * 100)
         ## True
