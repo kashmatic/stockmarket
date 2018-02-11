@@ -7,8 +7,8 @@ from lib.iex_criteria import IexCriteria
 client = MongoClient("mongodb://localhost:27017/stocks")
 db = client['stocks']
 astr = strftime("%Y%m%d_%H%M%S", localtime())
-GOOD = open(astr+"search.out", "w")
-BAD = open(astr+"search.err", "w")
+GOOD = open(astr+"_search.out", "w")
+BAD = open(astr+"_search.err", "w")
 
 
 def criteria(symbol):
