@@ -24,7 +24,7 @@ class IexCriteria:
         return True, "marketcap > 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
 
     def debtRatioMarketcap(self, limit):
-        if 'debt' not in self.stocksKeyStats:
+        if 'debt' not in self.stocksKeyStats or self.stocksKeyStats['debt'] == 0:
             return True, "debt is N/A or 0"
         if self.stocksKeyStats['debt'] <= 0:
             return False, "debt is N/A or 0\t{}".format(self.stocksKeyStats['debt'])
