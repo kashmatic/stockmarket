@@ -27,7 +27,7 @@ class IexCriteria:
         if 'debt' not in self.stocksKeyStats:
             return True, "debt is N/A or 0"
         if self.stocksKeyStats['debt'] <= 0:
-            return False, "debt is N/A or 0\t{}".format(self.self.stocksKeyStats['debt'])
+            return False, "debt is N/A or 0\t{}".format(self.stocksKeyStats['debt'])
         if self.stocksKeyStats['marketcap'] <= 0:
             return False, "marketcap <= 0"
         ratio = self.stocksKeyStats['debt'] / self.stocksKeyStats['marketcap']
