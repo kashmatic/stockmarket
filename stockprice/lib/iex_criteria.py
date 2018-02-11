@@ -107,5 +107,11 @@ class IexCriteria:
                 return abool, msg
                 # return "{}\t{}\n".format(self.symbol, msg)
 
-        return True, self.valuation
+        return True, "marketcapMoreThan1B(${:,.2f})\tdebtRatioMarketcap({:,.2f})\tcashMoreThan1B(${:,.2f})\tpeCalculate({:,.2f})\tebitda({})".format(
+            self.valuation['marketcapMoreThan1B'],
+            self.valuation['debtRatioMarketcap'],
+            self.valuation['cashMoreThan1B'],
+            self.valuation['peCalculate'],
+            self.valuation['ebitda']
+            )
         # return "{}\t{}\n".format(self.symbol, self.valuation)
