@@ -24,13 +24,13 @@ class IexCriteria:
         return True, "marketcap > 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
 
     def debtRatioMarketcap(self, limit):
-        if 'totalDebt' not in self.stocksFinancials:
-            return False, "debt is N/A or 0"
-        if self.stocksFinancials['totalDebt'] <= 0:
-            return False, "debt is N/A or 0\t{}".format(self.stocksFinancials['totalDebt'])
+        if 'debt' not in self.stocksKeyStats:
+            return True, "debt is N/A or 0"
+        if self.stocksKeyStats['debt'] <= 0:
+            return False, "debt is N/A or 0\t{}".format(self.self.stocksKeyStats['debt'])
         if self.stocksKeyStats['marketcap'] <= 0:
             return False, "marketcap <= 0"
-        ratio = self.stocksFinancials['totalDebt'] / self.stocksKeyStats['marketcap']
+        ratio = self.self.stocksKeyStats['debt'] / self.stocksKeyStats['marketcap']
         if ratio > limit:
             return False, "debt to marketcap ratio > {:,.2f}%\t{:,.2f}%".format(limit * 100, ratio * 100)
         ## True

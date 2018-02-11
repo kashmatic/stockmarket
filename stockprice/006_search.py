@@ -1,12 +1,14 @@
 from pymongo import MongoClient
+from time import localtime, strftime
 
 from lib.iex import IEX
 from lib.iex_criteria import IexCriteria
 
 client = MongoClient("mongodb://localhost:27017/stocks")
 db = client['stocks']
-GOOD = open("search.out", "w")
-BAD = open("search.err", "w")
+astr = strftime("%Y%m%d_%H%M%S", localtime())
+GOOD = open(astr+"search.out", "w")
+BAD = open(astr+"search.err", "w")
 
 
 def criteria(symbol):
