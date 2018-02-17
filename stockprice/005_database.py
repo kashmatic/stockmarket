@@ -14,8 +14,8 @@ def iex_database(alist):
     b = a.replace('ABCDEFGHIJKLMNOPQR', '')
     for sym in alist:
         # if not sym.startswith('A'):
-        if sym[0] not in list(b):
-            continue
+        # if sym[0] not in list(b):
+        #     continue
         if sym in ['SZC^#']:
             continue
         print(sym)
