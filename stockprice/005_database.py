@@ -4,12 +4,17 @@ from bson.objectid import ObjectId
 from lib.iex import IEX
 from lib.finviz import Finviz
 
+import string
+
 client = MongoClient("mongodb://localhost:27017/stocks")
 DB = client['stocks']
 
 def iex_database(alist):
+    a = string.ascii_uppercase
+    b = a.replace('ABCDEFGHIJKLMNOPQR', '')
     for sym in alist:
-        if not sym.startswith('A'):
+        # if not sym.startswith('A'):
+        if sym[0] not in list(b):
             continue
         print(sym)
         stocksEarnings = iex.stocksEarnings(sym)
