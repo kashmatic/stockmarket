@@ -16,10 +16,12 @@ def iex_database(alist):
         stocksFinancials = iex.stocksFinancials(sym)
         stocksKeyStats = iex.stocksKeyStats(sym)
         stocksQuote = iex.stocksQuote(sym)
+        stocksChart1y = iex.stocksChart1y(sym)
         DB[sym].insert({'stocksKeyStats': stocksKeyStats,
             'stocksFinancials': stocksFinancials,
             'stocksEarnings': stocksEarnings,
-            'stocksQuote': stocksQuote})
+            'stocksQuote': stocksQuote,
+            'stocksChart1y': stocksChart1y})
 
 def iex_database_update(alist):
     for sym in alist:
@@ -38,6 +40,6 @@ def finviz(alist):
 
 if __name__ == "__main__":
     iex = IEX()
-    # iex_database(iex.symbols())
-    iex_database_update(iex.symbols())
+    iex_database(iex.symbols())
+    # iex_database_update(iex.symbols())
     # finviz(iex.symbols())
