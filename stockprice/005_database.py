@@ -16,6 +16,8 @@ def iex_database(alist):
         # if not sym.startswith('A'):
         if sym[0] not in list(b):
             continue
+        if sym in ['SZC^#']:
+            continue
         print(sym)
         stocksEarnings = iex.stocksEarnings(sym)
         stocksFinancials = iex.stocksFinancials(sym)
