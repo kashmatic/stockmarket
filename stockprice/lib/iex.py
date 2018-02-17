@@ -37,5 +37,9 @@ class IEX:
         url = '{}/stock/{}/quote'.format(URL, symbol)
         return self.get_data(url)
 
+    def stocksChart1y(self, symbol):
+        url = '{}/stock/{}/chart/1y'.format(URL, symbol)
+        return self.get_data(url)
+
 if __name__ == '__main__':
     pass

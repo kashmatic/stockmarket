@@ -21,10 +21,15 @@ def iex_database(alist):
             'stocksEarnings': stocksEarnings,
             'stocksQuote': stocksQuote})
 
+def iex_database_update(alist):
+    for sym in alist:
+        print(sym)
+        jobj = iex.stocksChart1y(sym)
+        id = DB[sym].find_one({}, {"_id": 1})
+        DB[sym].update_one({"_id": ObjectId(id['_id'])}, {"$set": {'stocksChart1y': jobj}})
+
 def finviz(alist):
     for sym in alist:
-        if not sym.startswith('A'):
-            continue
         print(sym)
         f = Finviz()
         jobj = f.get_stat(sym)
@@ -34,4 +39,5 @@ def finviz(alist):
 if __name__ == "__main__":
     iex = IEX()
     # iex_database(iex.symbols())
-    finviz(iex.symbols())
+    iex_database_update(iex.symbols())
+    # finviz(iex.symbols())
