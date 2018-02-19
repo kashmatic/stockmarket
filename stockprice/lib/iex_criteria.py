@@ -109,6 +109,8 @@ class IexCriteria:
             # print(item['volume'])
         tsum = sum(alist)/52
         last5 = sum(alist[-5:])
+        if tsum == 0:
+            return False, "Last 7 days is 0\t{}".format(tsum)
         ratio = last5/tsum
         if ratio < num:
             return False, "Last 7 days ratio < 2\t{}".format(ratio)
