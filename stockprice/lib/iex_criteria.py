@@ -111,6 +111,8 @@ class IexCriteria:
         if tsum < threshold:
             return False, "Average volume < {}\t{}".format(threshold, tsum)
         last5 = sum(alist[-5:])
+        if last5 < 2000000:
+            return False, "Last 7 days volume < 2000000\t{}".format(tsum)
         if tsum == 0:
             return False, "Last 7 days is 0\t{}".format(tsum)
         ratio = last5/tsum
