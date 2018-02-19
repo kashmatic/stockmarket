@@ -127,7 +127,7 @@ class IexCriteria:
         return True, "Last 7 days ratio > {}\t{}".format(num, ratio)
 
     def finvizPEttm(self, num):
-        if not self.finviz['P/E']:
+        if not self.finviz or not self.finviz['P/E']:
             return False, "Finviz P/E(ttm) \tN/A"
         if float(self.finviz['P/E']) <= 0:
             return False, "Finviz P/E(ttm) <= 0\t{}".format(self.finviz['P/E'])
@@ -140,7 +140,7 @@ class IexCriteria:
         return True, "Finviz P/E(ttm) < {}\t{}".format(num, self.finviz['P/E'])
 
     def finvizPEforward(self, num):
-        if not self.finviz['Forward P/E']:
+        if not self.finviz or not self.finviz['Forward P/E']:
             return False, "Finviz Fwd P/E \tN/A"
         if float(self.finviz['Forward P/E']) <= 0:
             return False, "Finviz Fwd P/E <= 0\t{}".format(self.finviz['Forward P/E'])
