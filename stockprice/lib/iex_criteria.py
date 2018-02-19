@@ -104,7 +104,7 @@ class IexCriteria:
         self.valuation['ebitda'] = self.stocksKeyStats['EBITDA']
         return True, "EBITDA > {}\t{}".format(num, self.stocksKeyStats['EBITDA'])
 
-    def historical(self, threshold, num):
+    def volumeChange(self, threshold, num):
         alist = []
         for item in self.stocksChart1y:
             alist.append(item['volume'])
@@ -126,42 +126,42 @@ class IexCriteria:
         self.valuation['stocksChart1y'] = ratio
         return True, "Last 7 days ratio > {}\t{}".format(num, ratio)
 
-    def finvizPEttm(self):
+    def finvizPEttm(self, num):
         if not self.finviz['P/E']:
             return False, "Finviz P/E(ttm) \tN/A"
         if float(self.finviz['P/E']) <= 0:
             return False, "Finviz P/E(ttm) <= 0\t{}".format(self.finviz['P/E'])
-        if float(self.finviz['P/E']) > 15:
-            return False, "Finviz P/E(ttm) > 15\t{}".format(self.finviz['P/E'])
+        if float(self.finviz['P/E']) > num:
+            return False, "Finviz P/E(ttm) > {}\t{}".format(num, self.finviz['P/E'])
         # print(self.finviz['P/E'])
         # print(self.finviz['Forward P/E'])
         ## True
         self.valuation['finvizPEttm'] = self.finviz['P/E']
-        return True, "Finviz P/E(ttm) < 15\t{}".format(self.finviz['P/E'])
+        return True, "Finviz P/E(ttm) < {}\t{}".format(num, self.finviz['P/E'])
 
-    def finvizPEforward(self):
+    def finvizPEforward(self, num):
         if not self.finviz['Forward P/E']:
             return False, "Finviz Fwd P/E \tN/A"
         if float(self.finviz['Forward P/E']) <= 0:
             return False, "Finviz Fwd P/E <= 0\t{}".format(self.finviz['Forward P/E'])
-        if float(self.finviz['Forward P/E']) > 15:
-            return False, "Finviz Fwd P/E > 15\t{}".format(self.finviz['Forward P/E'])
+        if float(self.finviz['Forward P/E']) > num:
+            return False, "Finviz Fwd P/E > {}\t{}".format(num, self.finviz['Forward P/E'])
         # print(self.finviz['P/E'])
         # print(self.finviz['Forward P/E'])
         ## True
         self.valuation['finvizPEforward'] = self.finviz['Forward P/E']
-        return True, "Finviz Fwd P/E < 15\t{}".format(self.finviz['Forward P/E'])
+        return True, "Finviz Fwd P/E < {}\t{}".format(num, self.finviz['Forward P/E'])
 
     def validate(self):
         fnlist = [
-            # self.marketcapMoreThan1B(1000000000),
-            # self.debtRatioMarketcap(0.5),
-            # self.cashMoreThan1B(1000000000),
-            # self.trailingPECalculate(15),
-            # self.ebitda(1),
-            # self.historical(100000, 3),
-            self.finvizPEttm(),
-            self.finvizPEforward(),
+            self.marketcapMoreThan1B(1000000000),
+            self.debtRatioMarketcap(0.5),
+            self.cashMoreThan1B(1000000000),
+            self.trailingPECalculate(15),
+            self.ebitda(1),
+            # self.volumeChange(100000, 3),
+            # self.finvizPEttm(15),
+            # self.finvizPEforward(15),
         ]
 
         for fn in fnlist:
@@ -170,20 +170,20 @@ class IexCriteria:
                 return abool, msg
                 # return "{}\t{}\n".format(self.symbol, msg)
 
-        # return True, "marketcapMoreThan1B(${:,.2f})\tdebtRatioMarketcap({:,.2f})\tcashMoreThan1B(${:,.2f})\tpeCalculate({:,.2f})\tebitda({})".format(
-        #     self.valuation['marketcapMoreThan1B'],
-        #     self.valuation['debtRatioMarketcap'],
-        #     self.valuation['cashMoreThan1B'],
-        #     self.valuation['peCalculate'],
-        #     self.valuation['ebitda'],
-        #     self.valuation['stocksChart1y']
-        #     )
+        return True, "marketcapMoreThan1B(${:,.2f})\tdebtRatioMarketcap({:,.2f})\tcashMoreThan1B(${:,.2f})\tpeCalculate({:,.2f})\tebitda({})".format(
+            self.valuation['marketcapMoreThan1B'],
+            self.valuation['debtRatioMarketcap'],
+            self.valuation['cashMoreThan1B'],
+            self.valuation['peCalculate'],
+            self.valuation['ebitda'],
+            # self.valuation['stocksChart1y']
+            )
         # return True, "marketcapMoreThan1B (${:,.2f})\tratio ({:,.2f})".format(
         #     self.valuation['marketcapMoreThan1B'],
         #     self.valuation['stocksChart1y']
         #     )
-        return True, "Finviz P/E(ttm)\t{:,.2f}\tFinviz Fwd P/E\t{:,.2f}".format(
-            float(self.valuation['finvizPEttm']),
-            float(self.valuation['finvizPEforward'])
-            )
+        # return True, "Finviz P/E(ttm)\t{:,.2f}\tFinviz Fwd P/E\t{:,.2f}".format(
+        #     float(self.valuation['finvizPEttm']),
+        #     float(self.valuation['finvizPEforward'])
+        #     )
         # return "{}\t{}\n".format(self.symbol, self.valuation)
