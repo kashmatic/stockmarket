@@ -116,6 +116,8 @@ class IexCriteria:
             return False, "Last 7 days ratio < 2\t{}".format(ratio)
         # print(tsum, last5, last5/tsum)
         # print(self.stocksKeyStats['marketcap'])
+        ## True
+        self.valuation['stocksChart1y'] = ratio
         return True, "Last 7 days ratio > 2\t{}".format(ratio)
 
     def newtest(self):
@@ -138,11 +140,15 @@ class IexCriteria:
                 return abool, msg
                 # return "{}\t{}\n".format(self.symbol, msg)
 
-        return True, "marketcapMoreThan1B(${:,.2f})\tdebtRatioMarketcap({:,.2f})\tcashMoreThan1B(${:,.2f})\tpeCalculate({:,.2f})\tebitda({})".format(
-            self.valuation['marketcapMoreThan1B'],
-            self.valuation['debtRatioMarketcap'],
-            self.valuation['cashMoreThan1B'],
-            self.valuation['peCalculate'],
-            self.valuation['ebitda']
+        # return True, "marketcapMoreThan1B(${:,.2f})\tdebtRatioMarketcap({:,.2f})\tcashMoreThan1B(${:,.2f})\tpeCalculate({:,.2f})\tebitda({})".format(
+        #     self.valuation['marketcapMoreThan1B'],
+        #     self.valuation['debtRatioMarketcap'],
+        #     self.valuation['cashMoreThan1B'],
+        #     self.valuation['peCalculate'],
+        #     self.valuation['ebitda'],
+        #     self.valuation['stocksChart1y']
+        #     )
+        return True, "ratio ({:,.2f})".format(
+            self.valuation['stocksChart1y']
             )
         # return "{}\t{}\n".format(self.symbol, self.valuation)
