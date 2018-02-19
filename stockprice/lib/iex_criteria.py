@@ -157,11 +157,11 @@ class IexCriteria:
             self.marketcapMoreThan1B(1000000000),
             self.debtRatioMarketcap(0.5),
             self.cashMoreThan1B(1000000000),
-            self.trailingPECalculate(15),
+            # self.trailingPECalculate(15),
             self.ebitda(1),
             # self.volumeChange(100000, 3),
-            # self.finvizPEttm(15),
-            # self.finvizPEforward(15),
+            self.finvizPEttm(15),
+            self.finvizPEforward(15),
         ]
 
         for fn in fnlist:
@@ -170,20 +170,20 @@ class IexCriteria:
                 return abool, msg
                 # return "{}\t{}\n".format(self.symbol, msg)
 
-        return True, "marketcapMoreThan1B(${:,.2f})\tdebtRatioMarketcap({:,.2f})\tcashMoreThan1B(${:,.2f})\tpeCalculate({:,.2f})\tebitda({})".format(
-            self.valuation['marketcapMoreThan1B'],
-            self.valuation['debtRatioMarketcap'],
-            self.valuation['cashMoreThan1B'],
-            self.valuation['peCalculate'],
-            self.valuation['ebitda'],
-            # self.valuation['stocksChart1y']
-            )
+        # return True, "marketcapMoreThan1B(${:,.2f})\tdebtRatioMarketcap({:,.2f})\tcashMoreThan1B(${:,.2f})\tpeCalculate({:,.2f})\tebitda({})".format(
+        #     self.valuation['marketcapMoreThan1B'],
+        #     self.valuation['debtRatioMarketcap'],
+        #     self.valuation['cashMoreThan1B'],
+        #     self.valuation['peCalculate'],
+        #     self.valuation['ebitda'],
+        #     # self.valuation['stocksChart1y']
+        #     )
         # return True, "marketcapMoreThan1B (${:,.2f})\tratio ({:,.2f})".format(
         #     self.valuation['marketcapMoreThan1B'],
         #     self.valuation['stocksChart1y']
         #     )
-        # return True, "Finviz P/E(ttm)\t{:,.2f}\tFinviz Fwd P/E\t{:,.2f}".format(
-        #     float(self.valuation['finvizPEttm']),
-        #     float(self.valuation['finvizPEforward'])
-        #     )
+        return True, "Finviz P/E(ttm)\t{:,.2f}\tFinviz Fwd P/E\t{:,.2f}".format(
+            float(self.valuation['finvizPEttm']),
+            float(self.valuation['finvizPEforward'])
+            )
         # return "{}\t{}\n".format(self.symbol, self.valuation)
