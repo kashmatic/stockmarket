@@ -15,13 +15,15 @@ class IexCriteria:
         self.stocksChart1y = stocksChart1y
         self.finviz = finviz
         self.valuation = dict(
-            marketcapMoreThan1B=0,
-            debtRatioMarketcap=0,
-            cashMoreThan1B=0,
-            peCalculate=0,
-            ebitda=0,
-            stocksChart1y=0,
-            score=0
+            marketcapMoreThan1B=None,
+            debtRatioMarketcap=None,
+            cashMoreThan1B=None,
+            peCalculate=None,
+            ebitda=None,
+            stocksChart1y=None,
+            finvizPEttm=None,
+            finvizPEforward=None,
+            score=None
         )
 
     def marketcapMoreThan1B(self, dollars):
@@ -117,25 +119,49 @@ class IexCriteria:
             return False, "Last 7 days is 0\t{}".format(tsum)
         ratio = last5/tsum
         if ratio < num:
-            return False, "Last 7 days ratio < 2\t{}".format(ratio)
+            return False, "Last 7 days ratio < {}\t{}".format(num, ratio)
         # print(tsum, last5, last5/tsum)
         # print(self.stocksKeyStats['marketcap'])
         ## True
         self.valuation['stocksChart1y'] = ratio
-        return True, "Last 7 days ratio > 2\t{}".format(ratio)
+        return True, "Last 7 days ratio > {}\t{}".format(num, ratio)
 
-    def newtest(self):
-        print(self.finviz['P/E'])
-        print(self.finviz['Forward P/E'])
+    def finvizPEttm(self):
+        if not self.finviz['P/E']:
+            return False, "Finviz P/E(ttm) \tN/A"
+        if float(self.finviz['P/E']) <= 0:
+            return False, "Finviz P/E(ttm) <= 0\t{}".format(self.finviz['P/E'])
+        if float(self.finviz['P/E']) > 15:
+            return False, "Finviz P/E(ttm) > 15\t{}".format(self.finviz['P/E'])
+        # print(self.finviz['P/E'])
+        # print(self.finviz['Forward P/E'])
+        ## True
+        self.valuation['finvizPEttm'] = self.finviz['P/E']
+        return True, "Finviz P/E(ttm) < 15\t{}".format(self.finviz['P/E'])
+
+    def finvizPEforward(self):
+        if not self.finviz['Forward P/E']:
+            return False, "Finviz Fwd P/E \tN/A"
+        if float(self.finviz['Forward P/E']) <= 0:
+            return False, "Finviz Fwd P/E <= 0\t{}".format(self.finviz['Forward P/E'])
+        if float(self.finviz['Forward P/E']) > 15:
+            return False, "Finviz Fwd P/E > 15\t{}".format(self.finviz['Forward P/E'])
+        # print(self.finviz['P/E'])
+        # print(self.finviz['Forward P/E'])
+        ## True
+        self.valuation['finvizPEforward'] = self.finviz['Forward P/E']
+        return True, "Finviz Fwd P/E < 15\t{}".format(self.finviz['Forward P/E'])
 
     def validate(self):
         fnlist = [
-            self.marketcapMoreThan1B(1000000000),
+            # self.marketcapMoreThan1B(1000000000),
             # self.debtRatioMarketcap(0.5),
             # self.cashMoreThan1B(1000000000),
             # self.trailingPECalculate(15),
             # self.ebitda(1),
-            self.historical(100000, 3)
+            # self.historical(100000, 3),
+            self.finvizPEttm(),
+            self.finvizPEforward(),
         ]
 
         for fn in fnlist:
@@ -152,8 +178,12 @@ class IexCriteria:
         #     self.valuation['ebitda'],
         #     self.valuation['stocksChart1y']
         #     )
-        return True, "marketcapMoreThan1B(${:,.2f})\tratio ({:,.2f})".format(
-            self.valuation['marketcapMoreThan1B'],
-            self.valuation['stocksChart1y']
+        # return True, "marketcapMoreThan1B (${:,.2f})\tratio ({:,.2f})".format(
+        #     self.valuation['marketcapMoreThan1B'],
+        #     self.valuation['stocksChart1y']
+        #     )
+        return True, "Finviz P/E(ttm)\t{:,.2f}\tFinviz Fwd P/E\t{:,.2f}".format(
+            float(self.valuation['finvizPEttm']),
+            float(self.valuation['finvizPEforward'])
             )
         # return "{}\t{}\n".format(self.symbol, self.valuation)
