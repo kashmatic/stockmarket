@@ -161,7 +161,7 @@ class IexCriteria:
             self.ebitda(1),
             # self.volumeChange(100000, 3),
             self.finvizPEttm(15),
-            self.finvizPEforward(15),
+            # self.finvizPEforward(15),
         ]
 
         for fn in fnlist:
