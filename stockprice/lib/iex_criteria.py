@@ -126,7 +126,7 @@ class IexCriteria:
 
     def validate(self):
         fnlist = [
-            # self.marketcapMoreThan1B(1000000000),
+            self.marketcapMoreThan1B(1000000000),
             # self.debtRatioMarketcap(0.5),
             # self.cashMoreThan1B(1000000000),
             # self.trailingPECalculate(15),
@@ -148,7 +148,8 @@ class IexCriteria:
         #     self.valuation['ebitda'],
         #     self.valuation['stocksChart1y']
         #     )
-        return True, "ratio ({:,.2f})".format(
+        return True, "marketcapMoreThan1B(${:,.2f})\tratio ({:,.2f})".format(
+            self.valuation['marketcapMoreThan1B'],
             self.valuation['stocksChart1y']
             )
         # return "{}\t{}\n".format(self.symbol, self.valuation)
