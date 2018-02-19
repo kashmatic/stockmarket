@@ -135,7 +135,7 @@ class IexCriteria:
             # self.cashMoreThan1B(1000000000),
             # self.trailingPECalculate(15),
             # self.ebitda(1),
-            self.historical(100000, 2)
+            self.historical(100000, 3)
         ]
 
         for fn in fnlist:
