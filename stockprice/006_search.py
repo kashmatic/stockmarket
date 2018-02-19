@@ -16,7 +16,10 @@ def criteria(symbol):
         db[symbol].find_one({},{"stocksEarnings":1, "_id":0})['stocksEarnings'],
         db[symbol].find_one({},{"stocksFinancials":1, "_id":0})['stocksFinancials'],
         db[symbol].find_one({},{"stocksKeyStats":1, "_id":0})['stocksKeyStats'],
-        db[symbol].find_one({},{"stocksQuote":1, "_id":0})['stocksQuote'])
+        db[symbol].find_one({},{"stocksQuote":1, "_id":0})['stocksQuote'],
+        db[symbol].find_one({},{"stocksChart1y":1, "_id":0})['stocksChart1y'],
+        db[symbol].find_one({},{"finviz":1, "_id":0})['finviz'])
+    # aobj.newtest()
     abool, msg = aobj.validate()
     if abool:
         GOOD.write("{}\t{}\n".format(symbol, msg))

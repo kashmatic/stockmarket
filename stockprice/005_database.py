@@ -10,13 +10,12 @@ client = MongoClient("mongodb://localhost:27017/stocks")
 DB = client['stocks']
 
 def iex_database(alist):
-    a = string.ascii_uppercase
-    b = a.replace('ABCDEFGHIJKLMNOPQR', '')
+    # a = string.ascii_uppercase
+    # b = a.replace('ABCDEFGHIJKLMNOPQR', '')
     for sym in alist:
-        # if not sym.startswith('A'):
+        if not sym.startswith('A'):
         # if sym[0] not in list(b):
-        #     continue
-        if sym in ['SZC^#']:
+        # if sym in ['SZC^#']:
             continue
         print(sym)
         stocksEarnings = iex.stocksEarnings(sym)
@@ -47,6 +46,6 @@ def finviz(alist):
 
 if __name__ == "__main__":
     iex = IEX()
-    iex_database(iex.symbols())
+    # iex_database(iex.symbols())
     # iex_database_update(iex.symbols())
-    # finviz(iex.symbols())
+    finviz(iex.symbols())

@@ -1,16 +1,26 @@
 class IexCriteria:
-    def __init__(self, symbol, stocksEarnings, stocksFinancials, stocksKeyStats, stocksQuote):
+    def __init__(self,
+            symbol,
+            stocksEarnings,
+            stocksFinancials,
+            stocksKeyStats,
+            stocksQuote,
+            stocksChart1y,
+            finviz):
         self.symbol = symbol
         self.stocksEarnings = stocksEarnings
         self.stocksFinancials = stocksFinancials
         self.stocksKeyStats = stocksKeyStats
         self.stocksQuote = stocksQuote
+        self.stocksChart1y = stocksChart1y
+        self.finviz = finviz
         self.valuation = dict(
             marketcapMoreThan1B=0,
             debtRatioMarketcap=0,
             cashMoreThan1B=0,
             peCalculate=0,
             ebitda=0,
+            stocksChart1y=0,
             score=0
         )
 
@@ -92,13 +102,32 @@ class IexCriteria:
         self.valuation['ebitda'] = self.stocksKeyStats['EBITDA']
         return True, "EBITDA > {}\t{}".format(num, self.stocksKeyStats['EBITDA'])
 
+    def historical(self, num):
+        alist = []
+        for item in self.stocksChart1y:
+            alist.append(item['volume'])
+            # print(item['volume'])
+        tsum = sum(alist)/52
+        last5 = sum(alist[-5:])
+        ratio = last5/tsum
+        if ratio < num:
+            return False, "Last 7 days ratio < 2\t{}".format(ratio)
+        # print(tsum, last5, last5/tsum)
+        # print(self.stocksKeyStats['marketcap'])
+        return True, "Last 7 days ratio > 2\t{}".format(ratio)
+
+    def newtest(self):
+        print(self.finviz['P/E'])
+        print(self.finviz['Forward P/E'])
+
     def validate(self):
         fnlist = [
-            self.marketcapMoreThan1B(1000000000),
-            self.debtRatioMarketcap(0.5),
-            self.cashMoreThan1B(1000000000),
-            self.trailingPECalculate(15),
-            self.ebitda(1)
+            # self.marketcapMoreThan1B(1000000000),
+            # self.debtRatioMarketcap(0.5),
+            # self.cashMoreThan1B(1000000000),
+            # self.trailingPECalculate(15),
+            # self.ebitda(1),
+            self.historical(2)
         ]
 
         for fn in fnlist:
