@@ -19,10 +19,10 @@ class IexCriteria:
             debtRatioMarketcap=None,
             cashMoreThan1B=None,
             peCalculate=None,
-            ebitda=None,
+            ebitda=0,
             stocksChart1y=None,
-            finvizPEttm=None,
-            finvizPEforward=None,
+            finvizPEttm=0,
+            finvizPEforward=0,
             score=None
         )
 
