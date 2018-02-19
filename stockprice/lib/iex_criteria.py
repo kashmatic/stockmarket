@@ -102,12 +102,14 @@ class IexCriteria:
         self.valuation['ebitda'] = self.stocksKeyStats['EBITDA']
         return True, "EBITDA > {}\t{}".format(num, self.stocksKeyStats['EBITDA'])
 
-    def historical(self, num):
+    def historical(self, threshold, num):
         alist = []
         for item in self.stocksChart1y:
             alist.append(item['volume'])
             # print(item['volume'])
         tsum = sum(alist)/52
+        if tsum < threshold:
+            return False, "Average volume < {}\t{}".format(threshold, tsum)
         last5 = sum(alist[-5:])
         if tsum == 0:
             return False, "Last 7 days is 0\t{}".format(tsum)
@@ -131,7 +133,7 @@ class IexCriteria:
             # self.cashMoreThan1B(1000000000),
             # self.trailingPECalculate(15),
             # self.ebitda(1),
-            self.historical(2)
+            self.historical(100000, 2)
         ]
 
         for fn in fnlist:
