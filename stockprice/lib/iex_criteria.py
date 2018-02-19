@@ -15,15 +15,15 @@ class IexCriteria:
         self.stocksChart1y = stocksChart1y
         self.finviz = finviz
         self.valuation = dict(
-            marketcapMoreThan1B=None,
-            debtRatioMarketcap=None,
-            cashMoreThan1B=None,
-            peCalculate=None,
+            marketcapMoreThan1B=0,
+            debtRatioMarketcap=0,
+            cashMoreThan1B=0,
+            peCalculate=0,
             ebitda=0,
-            stocksChart1y=None,
+            stocksChart1y=0,
             finvizPEttm=0,
             finvizPEforward=0,
-            score=None
+            score=0
         )
 
     def marketcapMoreThan1B(self, dollars):
