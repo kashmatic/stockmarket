@@ -10,7 +10,7 @@ cashMoreThan:
   check: true
 peCalculateLessThan:
   value: 15
-  check: false
+  check: true
 ebitdaMoreThan:
   value: 1
   check: true

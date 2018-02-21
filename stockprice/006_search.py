@@ -36,7 +36,7 @@ def criteria(symbol):
         # db[symbol].find_one({},{"finviz":1, "_id":0})['finviz'])
     # aobj.newtest()
     abool, msg = aobj.validate()
-    print(abool, msg)
+    # print(abool, msg)
     if abool:
         GOOD.write("{}\t{}\n".format(symbol, msg))
     else:
@@ -46,7 +46,7 @@ def each_symbol():
     for sym in db.collection_names():
         print(sym)
         criteria(sym)
-        print('*'*100)
+        # print('*'*100)
 
 if __name__ == "__main__":
     GOOD.write("{}\n".format(columnHeader()))
