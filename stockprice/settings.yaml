@@ -1,0 +1,22 @@
+---
+marketcapMoreThan:
+  value: 1000000000
+  check: true
+debtRatioMarketcapLessThan:
+  value: 0.4
+  check: true
+cashMoreThan:
+  value: 1000000000
+  check: true
+peCalculateLessThan:
+  value: 15
+  check: false
+ebitdaMoreThan:
+  value: 1
+  check: true
+finvizPEttmLessThan:
+  value: 15
+  check: true
+finvizPEforwardLessThan:
+  value: 15
+  check: true
