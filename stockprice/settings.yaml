@@ -3,7 +3,7 @@ marketcapMoreThan:
   value: 1000000000
   check: true
 debtRatioMarketcapLessThan:
-  value: 0.4
+  value: 0.5
   check: true
 cashMoreThan:
   value: 1000000000
