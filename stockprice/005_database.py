@@ -46,6 +46,6 @@ def finviz(alist):
 
 if __name__ == "__main__":
     iex = IEX()
-    # iex_database(iex.symbols())
+    iex_database(iex.symbols())
     # iex_database_update(iex.symbols())
-    finviz(iex.symbols())
+    # finviz(iex.symbols())

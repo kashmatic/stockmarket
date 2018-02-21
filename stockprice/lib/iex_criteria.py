@@ -1,3 +1,5 @@
+import yaml
+
 class IexCriteria:
     def __init__(self,
             symbol,
@@ -15,94 +17,117 @@ class IexCriteria:
         self.stocksChart1y = stocksChart1y
         self.finviz = finviz
         self.valuation = dict(
-            marketcapMoreThan1B=0,
-            debtRatioMarketcap=0,
-            cashMoreThan1B=0,
-            peCalculate=0,
-            ebitda=0,
-            stocksChart1y=0,
-            finvizPEttm=0,
-            finvizPEforward=0,
-            score=0
+            marketcapMoreThan=None,
+            debtRatioMarketcapLessThan=None,
+            cashMoreThan=None,
+            peCalculateLessThan=None,
+            ebitdaMoreThan=None,
+            stocksChart1y=None,
+            finvizPEttmLessThan=None,
+            finvizPEforwardLessThan=None
         )
 
-    def marketcapMoreThan1B(self, dollars):
-        if 'marketcap' not in self.stocksKeyStats:
-            return False, "marketcap is N/A"
-        if self.stocksKeyStats['marketcap'] < dollars:
-            return False, "marketcap < 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
-        ## True
-        self.valuation['marketcapMoreThan1B'] = self.stocksKeyStats['marketcap']
-        return True, "marketcap > 1B\t${:,.2f}".format(self.stocksKeyStats['marketcap'])
+    def setMsg(self, key, value, msg):
+        self.valuation[key]['value'] = value
+        self.valuation[key]['msg'] = msg
 
-    def debtRatioMarketcap(self, limit):
-        if 'debt' not in self.stocksKeyStats or self.stocksKeyStats['debt'] == 0:
-            return True, "debt is N/A or 0"
+    def marketcapMoreThan(self, dollars):
+        key = 'marketcapMoreThan'
+        if 'marketcap' not in self.stocksKeyStats:
+            self.valuation[key] = 'N/A'
+            return True
+        if self.stocksKeyStats['marketcap'] < dollars:
+            self.valuation[key] = "(${:,.2f})".format(self.stocksKeyStats['marketcap'])
+            return False
+        ## True
+        self.valuation[key] = "${:,.2f}".format(self.stocksKeyStats['marketcap'])
+        return True
+
+    def debtRatioMarketcapLessThan(self, limit):
+        key = 'debtRatioMarketcapLessThan'
+        if 'debt' not in self.stocksKeyStats:
+            self.valuation[key] = 'N/A'
+            return True
         if self.stocksKeyStats['debt'] <= 0:
-            return False, "debt is N/A or 0\t{}".format(self.stocksKeyStats['debt'])
+            self.valuation[key] = 'debt (${:,.2f})'.format(self.stocksKeyStats['debt'])
+            return True
         if self.stocksKeyStats['marketcap'] <= 0:
-            return False, "marketcap <= 0"
+            self.valuation[key] = 'marketcap (${:,.2f})'.format(self.stocksKeyStats['marketcap'])
+            return False
         ratio = self.stocksKeyStats['debt'] / self.stocksKeyStats['marketcap']
         if ratio > limit:
-            return False, "debt to marketcap ratio > {:,.2f}%\t{:,.2f}%".format(limit * 100, ratio * 100)
+            self.valuation[key] = '({:,.2f})'.format(ratio)
+            return False
         ## True
-        self.valuation['debtRatioMarketcap'] = ratio
-        return True, "debt to marketcap ratio < {:,.2f}%\t{:,.2f}%".format(limit * 100, ratio * 100)
+        self.valuation[key] = "{:,.2f}".format(ratio)
+        return True
 
-    def cashMoreThan1B(self, dollars):
+    def cashMoreThan(self, dollars):
+        key = 'cashMoreThan'
         if not self.stocksFinancials['financials'][0]['currentCash']:
-            return False, "currentCash is N/A"
+            self.valuation[key] = "N/A"
+            return True
         if self.stocksFinancials['financials'][0]['currentCash'] < dollars:
-            return False, "currentCash < 1B\t${:,.2f}".format(self.stocksFinancials['financials'][0]['currentCash'])
+            self.valuation[key] = "(${:,.2f})".format(self.stocksFinancials['financials'][0]['currentCash'])
+            return False
         ## True
-        self.valuation['cashMoreThan1B'] = self.stocksFinancials['financials'][0]['currentCash']
-        return True, "currentCash > 1B\t${:,.2f}".format(self.stocksFinancials['financials'][0]['currentCash'])
+        self.valuation['cashMoreThan'] = "${:,.2f}".format(self.stocksFinancials['financials'][0]['currentCash'])
+        return True
 
-    def quotePriceRatioEstimatedEPS(self):
-        if 'earnings' not in self.stocksQuote:
-            return False, "earnings is N/A"
-        if not self.stocksQuote['earnings'][0]['actualEPS']:
-            return False, "actualEPS is null"
-        if self.stocksQuote['earnings'][0]['actualEPS'] <= 0:
-            return False, "estimatedEPS is negative or 0\t${:,.2f}".format(self.stocksQuote['earnings'][0]['actualEPS'])
-        if 'latestPrice' not in self.stocksEarnings:
-            return False, "latestPrice is NA"
-        ratio = self.stocksEarnings['latestPrice'] / self.stocksQuote['earnings'][0]['actualEPS']
-        if ratio > 15:
-            return False, "latestPrice / actualEPS > 15\t{:,.2f}".format(ratio)
-        ## True
-        self.valuation['quotePriceRatioEstimatedEPS'] = ratio
-        return True, "latestPrice / actualEPS < 15\t{:,.2f}".format(ratio)
+    # def quotePriceRatioEstimatedEPS(self):
+    #     if 'earnings' not in self.stocksQuote:
+    #         return False, "earnings is N/A"
+    #     if not self.stocksQuote['earnings'][0]['actualEPS']:
+    #         return False, "actualEPS is null"
+    #     if self.stocksQuote['earnings'][0]['actualEPS'] <= 0:
+    #         return False, "estimatedEPS is negative or 0\t${:,.2f}".format(self.stocksQuote['earnings'][0]['actualEPS'])
+    #     if 'latestPrice' not in self.stocksEarnings:
+    #         return False, "latestPrice is NA"
+    #     ratio = self.stocksEarnings['latestPrice'] / self.stocksQuote['earnings'][0]['actualEPS']
+    #     if ratio > 15:
+    #         return False, "latestPrice / actualEPS > 15\t{:,.2f}".format(ratio)
+    #     ## True
+    #     self.valuation['quotePriceRatioEstimatedEPS'] = ratio
+    #     return True, "latestPrice / actualEPS < 15\t{:,.2f}".format(ratio)
 
-    def trailingPECalculate(self, limit):
+    def peCalculateLessThan(self, limit):
         alist = []
+        key = 'peCalculateLessThan'
         if 'sharesOutstanding' not in self.stocksKeyStats:
-            return False, "sharesOutstanding is N/A"
+            self.valuation[key] = 'N/A'
+            return True
         if self.stocksKeyStats['sharesOutstanding'] == 0:
-            return False, "sharesOutstanding is 0"
+            self.valuation[key] = "sharesOutstanding (0)"
+            return True
         for report in self.stocksFinancials['financials']:
             if not report['netIncome']:
-                return False, "netIncome is N/A"
+                self.valuation[key] = 'netIncome (N/A)'
+                return False
             alist.append(report['netIncome'])
         # x = sum(alist)/len(alist)
         if sum(alist) <= 0:
-            return False, "sum of netIncome <= 0"
+            self.valuation[key] = "sum of netIncome (${:,.2f})".format(sum(alist))
+            return False
         basicEPS = sum(alist) / self.stocksKeyStats['sharesOutstanding']
         trailingPE = self.stocksQuote['delayedPrice'] / basicEPS
         if trailingPE > limit or trailingPE < 0:
-            return False, "peCalculate > 15\t{:,.2f}".format(trailingPE)
+            self.valuation[key] = "({:,.2f})".format(trailingPE)
+            return False
         ## True
-        self.valuation['peCalculate'] = trailingPE
-        return True, "peCalculate < 15\t{:,.2f}".format(trailingPE)
+        self.valuation[key] = "{:,.2f}".format(trailingPE)
+        return True
 
-    def ebitda(self, num):
+    def ebitdaMoreThan(self, num):
+        key = 'ebitdaMoreThan'
         if 'EBITDA' not in self.stocksKeyStats:
-            return False, "EBITDA is N/A"
+            self.valuation[key] = "(N/A)"
+            return True
         if self.stocksKeyStats['EBITDA'] < num:
-            return False, "EBITDA < {}\t{}".format(num, self.stocksKeyStats['EBITDA'])
+            self.valuation[key] = "({})".format(self.stocksKeyStats['EBITDA'])
+            return False
         ## TRUE
-        self.valuation['ebitda'] = self.stocksKeyStats['EBITDA']
-        return True, "EBITDA > {}\t{}".format(num, self.stocksKeyStats['EBITDA'])
+        self.valuation[key] = "{}".format(self.stocksKeyStats['EBITDA'])
+        return True
 
     def volumeChange(self, threshold, num):
         alist = []
@@ -126,64 +151,81 @@ class IexCriteria:
         self.valuation['stocksChart1y'] = ratio
         return True, "Last 7 days ratio > {}\t{}".format(num, ratio)
 
-    def finvizPEttm(self, num):
+    def finvizPEttmLessThan(self, num):
+        key = 'finvizPEttmLessThan'
         if not self.finviz or not self.finviz['P/E']:
-            return False, "Finviz P/E(ttm) \tN/A"
+            self.valuation[key] = "(N/A)"
+            return True
         if float(self.finviz['P/E']) <= 0:
-            return False, "Finviz P/E(ttm) <= 0\t{}".format(self.finviz['P/E'])
+            self.valuation[key] = "({:,.2f})".format(float(self.finviz['P/E']))
+            return False
         if float(self.finviz['P/E']) > num:
-            return False, "Finviz P/E(ttm) > {}\t{}".format(num, self.finviz['P/E'])
-        # print(self.finviz['P/E'])
-        # print(self.finviz['Forward P/E'])
+            self.valuation[key] = "({:,.2f})".format(float(self.finviz['P/E']))
+            return False
         ## True
-        self.valuation['finvizPEttm'] = self.finviz['P/E']
-        return True, "Finviz P/E(ttm) < {}\t{}".format(num, self.finviz['P/E'])
+        self.valuation[key] = "{:,.2f}".format(float(self.finviz['P/E']))
+        return True
 
-    def finvizPEforward(self, num):
+    def finvizPEforwardLessThan(self, num):
+        key = 'finvizPEforwardLessThan'
         if not self.finviz or not self.finviz['Forward P/E']:
-            return False, "Finviz Fwd P/E \tN/A"
+            self.valuation[key] = "(N/A)"
+            return True
         if float(self.finviz['Forward P/E']) <= 0:
-            return False, "Finviz Fwd P/E <= 0\t{}".format(self.finviz['Forward P/E'])
+            self.valuation[key] = "({:,.2f})".format(float(self.finviz['Forward P/E']))
+            return False
         if float(self.finviz['Forward P/E']) > num:
-            return False, "Finviz Fwd P/E > {}\t{}".format(num, self.finviz['Forward P/E'])
-        # print(self.finviz['P/E'])
-        # print(self.finviz['Forward P/E'])
+            self.valuation[key] = "({:,.2f})".format(float(self.finviz['Forward P/E']))
+            return False
         ## True
-        self.valuation['finvizPEforward'] = self.finviz['Forward P/E']
-        return True, "Finviz Fwd P/E < {}\t{}".format(num, self.finviz['Forward P/E'])
+        self.valuation[key] = "{:,.2f}".format(float(self.finviz['Forward P/E']))
+        return True
+
+    def printMsg(self):
+        alist = []
+        for key in self.valuation:
+            if self.valuation[key]:
+                alist.append(self.valuation[key])
+        return "\t".join(alist)
 
     def validate(self):
-        fnlist = [
-            self.marketcapMoreThan1B(1000000000),
-            self.debtRatioMarketcap(0.5),
-            self.cashMoreThan1B(1000000000),
-            # self.trailingPECalculate(15),
-            self.ebitda(1),
-            # self.volumeChange(100000, 3),
-            self.finvizPEttm(15),
-            # self.finvizPEforward(15),
-        ]
+        adic = {
+            'marketcapMoreThan': self.marketcapMoreThan,
+            'debtRatioMarketcapLessThan': self.debtRatioMarketcapLessThan,
+            'cashMoreThan': self.cashMoreThan,
+            'peCalculateLessThan': self.peCalculateLessThan,
+            'ebitdaMoreThan': self.ebitdaMoreThan,
+            'finvizPEttmLessThan': self.finvizPEttmLessThan,
+            'finvizPEforwardLessThan': self.finvizPEforwardLessThan
+        }
 
-        for fn in fnlist:
-            abool, msg = fn
-            if not abool:
-                return abool, msg
-                # return "{}\t{}\n".format(self.symbol, msg)
+        fh = open('settings.yaml')
+        a = yaml.load(fh)
+        fh.close()
 
-        # return True, "marketcapMoreThan1B(${:,.2f})\tdebtRatioMarketcap({:,.2f})\tcashMoreThan1B(${:,.2f})\tpeCalculate({:,.2f})\tebitda({})".format(
-        #     self.valuation['marketcapMoreThan1B'],
-        #     self.valuation['debtRatioMarketcap'],
-        #     self.valuation['cashMoreThan1B'],
-        #     self.valuation['peCalculate'],
-        #     self.valuation['ebitda'],
-        #     # self.valuation['stocksChart1y']
-        #     )
-        # return True, "marketcapMoreThan1B (${:,.2f})\tratio ({:,.2f})".format(
-        #     self.valuation['marketcapMoreThan1B'],
-        #     self.valuation['stocksChart1y']
-        #     )
-        return True, "Finviz P/E(ttm)\t{:,.2f}\tFinviz Fwd P/E\t{:,.2f}".format(
-            float(self.valuation['finvizPEttm']),
-            float(self.valuation['finvizPEforward'])
-            )
-        # return "{}\t{}\n".format(self.symbol, self.valuation)
+        for b in a:
+            # print(">>", a[b])
+            if not a[b]['check']:
+                continue
+            fn = adic[b]
+            val = a[b]['value']
+            if not fn(val):
+                return False, self.printMsg()
+
+        return True, self.printMsg()
+
+        # fnlist = [
+        #     self.marketcapMoreThan(1000000000),
+        #     self.debtRatioMarketcap(0.5),
+        #     self.cashMoreThan(1000000000),
+        #     # self.trailingPECalculate(15),
+        #     self.ebitda(1),
+        #     # self.volumeChange(100000, 3),
+        #     self.finvizPEttm(15),
+        #     # self.finvizPEforward(15),
+        # ]
+
+        # for fn in fnlist:
+        #     abool, msg = fn
+        #     if not abool:
+        #         return abool, msg
