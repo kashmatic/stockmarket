@@ -31,30 +31,47 @@ class IexCriteria:
         self.valuation[key]['value'] = value
         self.valuation[key]['msg'] = msg
 
+    def get_marketcap(self):
+        if 'marketcap' in self.stocksKeyStats:
+            return int(self.stocksKeyStats['marketcap'])
+        else:
+            return None
+
     def marketcapMoreThan(self, dollars):
         key = 'marketcapMoreThan'
-        if 'marketcap' not in self.stocksKeyStats:
+        # if 'marketcap' not in self.stocksKeyStats:
+        value = self.get_marketcap()
+        if not value:
             self.valuation[key] = 'N/A'
             return True
-        if self.stocksKeyStats['marketcap'] < dollars:
-            self.valuation[key] = "(${:,.2f})".format(self.stocksKeyStats['marketcap'])
+        if value < dollars:
+            self.valuation[key] = "(${:,.2f})".format(value)
             return False
         ## True
-        self.valuation[key] = "${:,.2f}".format(self.stocksKeyStats['marketcap'])
+        self.valuation[key] = "${:,.2f}".format(value)
         return True
+
+    def get_debt(self):
+        if 'debt' in self.stocksKeyStats:
+            return int(self.stocksKeyStats['debt'])
+        else:
+            return None
 
     def debtRatioMarketcapLessThan(self, limit):
         key = 'debtRatioMarketcapLessThan'
-        if 'debt' not in self.stocksKeyStats:
+        debt = self.get_debt()
+        marketcap = self.get_marketcap()
+        # if 'debt' not in self.stocksKeyStats:
+        if not debt:
             self.valuation[key] = 'N/A'
             return True
-        if self.stocksKeyStats['debt'] <= 0:
-            self.valuation[key] = 'debt (${:,.2f})'.format(self.stocksKeyStats['debt'])
+        if debt <= 0:
+            self.valuation[key] = 'debt (${:,.2f})'.format(debt)
             return True
-        if self.stocksKeyStats['marketcap'] <= 0:
-            self.valuation[key] = 'marketcap (${:,.2f})'.format(self.stocksKeyStats['marketcap'])
+        if marketcap <= 0:
+            self.valuation[key] = 'marketcap (${:,.2f})'.format(marketcap)
             return False
-        ratio = self.stocksKeyStats['debt'] / self.stocksKeyStats['marketcap']
+        ratio = debt / marketcap
         if ratio > limit:
             self.valuation[key] = '({:,.2f})'.format(ratio)
             return False
@@ -62,16 +79,30 @@ class IexCriteria:
         self.valuation[key] = "{:,.2f}".format(ratio)
         return True
 
+    def get_cash(self):
+        if 'financials' in self.stocksFinancials:
+            if len(self.stocksFinancials['financials']) <= 0:
+                return None
+            if 'currentCash' not in self.stocksFinancials['financials'][0]:
+                return None
+            if not self.stocksFinancials['financials'][0]['currentCash']:
+                return None
+            return int(self.stocksFinancials['financials'][0]['currentCash'])
+        else:
+            return None
+
     def cashMoreThan(self, dollars):
         key = 'cashMoreThan'
-        if not self.stocksFinancials['financials'][0]['currentCash']:
+        cash = self.get_cash()
+        # if not self.stocksFinancials['financials'][0]['currentCash']:
+        if not cash:
             self.valuation[key] = "N/A"
             return True
-        if self.stocksFinancials['financials'][0]['currentCash'] < dollars:
-            self.valuation[key] = "(${:,.2f})".format(self.stocksFinancials['financials'][0]['currentCash'])
+        if cash < dollars:
+            self.valuation[key] = "(${:,.2f})".format(cash)
             return False
         ## True
-        self.valuation['cashMoreThan'] = "${:,.2f}".format(self.stocksFinancials['financials'][0]['currentCash'])
+        self.valuation['cashMoreThan'] = "${:,.2f}".format(cash)
         return True
 
     # def quotePriceRatioEstimatedEPS(self):
@@ -90,43 +121,72 @@ class IexCriteria:
     #     self.valuation['quotePriceRatioEstimatedEPS'] = ratio
     #     return True, "latestPrice / actualEPS < 15\t{:,.2f}".format(ratio)
 
-    def peCalculateLessThan(self, limit):
+    def get_sharesoutstanding(self):
+        if 'sharesOutstanding' in self.stocksKeyStats:
+            return int(self.stocksKeyStats['sharesOutstanding'])
+        else:
+            return None
+
+    def get_netIncome(self):
         alist = []
-        key = 'peCalculateLessThan'
-        if 'sharesOutstanding' not in self.stocksKeyStats:
-            self.valuation[key] = 'N/A'
-            return True
-        if self.stocksKeyStats['sharesOutstanding'] == 0:
-            self.valuation[key] = "sharesOutstanding (0)"
-            return True
         for report in self.stocksFinancials['financials']:
             if not report['netIncome']:
-                self.valuation[key] = 'netIncome (N/A)'
-                return False
-            alist.append(report['netIncome'])
-        # x = sum(alist)/len(alist)
-        if sum(alist) <= 0:
-            self.valuation[key] = "sum of netIncome (${:,.2f})".format(sum(alist))
+                return None
+            alist.append(int(report['netIncome']))
+        return sum(alist)
+
+    def get_delayedprice(self):
+        if 'delayedPrice' in self.stocksQuote:
+            return int(self.stocksQuote['delayedPrice'])
+        else:
+            return 0
+
+    def peCalculateLessThan(self, limit):
+        key = 'peCalculateLessThan'
+        shares = self.get_sharesoutstanding()
+        # if 'sharesOutstanding' not in self.stocksKeyStats:
+        if not shares:
+            self.valuation[key] = 'N/A'
+            return True
+        if shares == 0:
+            self.valuation[key] = "sharesOutstanding (0)"
+            return True
+        netIncome = self.get_netIncome()
+        if not netIncome:
+            self.valuation[key] = 'netIncome (N/A)'
             return False
-        basicEPS = sum(alist) / self.stocksKeyStats['sharesOutstanding']
-        trailingPE = self.stocksQuote['delayedPrice'] / basicEPS
-        if trailingPE > limit or trailingPE < 0:
+
+        if netIncome <= 0:
+            self.valuation[key] = "sum of netIncome (${:,.2f})".format(netIncome)
+            return False
+        basicEPS = netIncome / shares
+        delayedPrice = self.get_delayedprice()
+        trailingPE = delayedPrice / basicEPS
+        if trailingPE > limit or trailingPE <= 0:
             self.valuation[key] = "({:,.2f})".format(trailingPE)
             return False
         ## True
         self.valuation[key] = "{:,.2f}".format(trailingPE)
         return True
 
+    def get_ebitda(self):
+        if 'EBITDA' in self.stocksKeyStats:
+            self.stocksKeyStats['EBITDA']
+        else:
+            return None
+
     def ebitdaMoreThan(self, num):
         key = 'ebitdaMoreThan'
-        if 'EBITDA' not in self.stocksKeyStats:
+        ebitda = self.get_ebitda()
+        # if 'EBITDA' not in self.stocksKeyStats:
+        if not ebitda:
             self.valuation[key] = "(N/A)"
             return True
-        if self.stocksKeyStats['EBITDA'] < num:
-            self.valuation[key] = "({})".format(self.stocksKeyStats['EBITDA'])
+        if ebitda < num:
+            self.valuation[key] = "({})".format(ebitda)
             return False
         ## TRUE
-        self.valuation[key] = "{}".format(self.stocksKeyStats['EBITDA'])
+        self.valuation[key] = "{}".format(ebitda)
         return True
 
     def volumeChange(self, threshold, num):
@@ -151,34 +211,45 @@ class IexCriteria:
         self.valuation['stocksChart1y'] = ratio
         return True, "Last 7 days ratio > {}\t{}".format(num, ratio)
 
+    def get_finvizpettm(self):
+        if not self.finviz or 'P/E' not in self.finviz:
+            return None
+        return float(self.finviz['P/E'])
+
     def finvizPEttmLessThan(self, num):
         key = 'finvizPEttmLessThan'
-        if not self.finviz or not self.finviz['P/E']:
+        pettm = self.get_finvizpettm()
+        # if not self.finviz or not self.finviz['P/E']:
+        if not pettm:
             self.valuation[key] = "(N/A)"
             return True
-        if float(self.finviz['P/E']) <= 0:
-            self.valuation[key] = "({:,.2f})".format(float(self.finviz['P/E']))
+        if pe <= 0:
+            self.valuation[key] = "({:,.2f})".format(pettm)
             return False
-        if float(self.finviz['P/E']) > num:
-            self.valuation[key] = "({:,.2f})".format(float(self.finviz['P/E']))
+        if pettm > num:
+            self.valuation[key] = "({:,.2f})".format(pettm)
             return False
         ## True
-        self.valuation[key] = "{:,.2f}".format(float(self.finviz['P/E']))
+        self.valuation[key] = "{:,.2f}".format(pettm)
         return True
+
+    def get_finvizpeforward(self):
+        if not self.finviz or 'Forward P/E' not in self.finviz:
+            return None
+        return float(self.finviz['Forward P/E'])
 
     def finvizPEforwardLessThan(self, num):
         key = 'finvizPEforwardLessThan'
-        if not self.finviz or not self.finviz['Forward P/E']:
+        peforward = self.get_finvizpeforward()
+        # if not self.finviz or not self.finviz['Forward P/E']:
+        if not peforward:
             self.valuation[key] = "(N/A)"
             return True
-        if float(self.finviz['Forward P/E']) <= 0:
-            self.valuation[key] = "({:,.2f})".format(float(self.finviz['Forward P/E']))
-            return False
-        if float(self.finviz['Forward P/E']) > num:
-            self.valuation[key] = "({:,.2f})".format(float(self.finviz['Forward P/E']))
+        if peforward <= 0 or peforward > num:
+            self.valuation[key] = "({:,.2f})".format(peforward)
             return False
         ## True
-        self.valuation[key] = "{:,.2f}".format(float(self.finviz['Forward P/E']))
+        self.valuation[key] = "{:,.2f}".format(peforward)
         return True
 
     def printMsg(self):
@@ -229,3 +300,4 @@ class IexCriteria:
         #     abool, msg = fn
         #     if not abool:
         #         return abool, msg
+22834758609
