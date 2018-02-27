@@ -136,7 +136,7 @@ class IexCriteria:
         return sum(alist)
 
     def get_delayedprice(self):
-        if 'delayedPrice' in self.stocksQuote:
+        if 'delayedPrice' in self.stocksQuote and self.stocksQuote['delayedPrice']:
             return int(self.stocksQuote['delayedPrice'])
         else:
             return 0
