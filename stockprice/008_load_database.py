@@ -6,7 +6,8 @@ from lib.iex_criteria import IexCriteria
 
 from datetime import date as datetoday
 
-DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
+# DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
+DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
 CURSOR = DB.cursor()
 
 client = MongoClient("mongodb://localhost:27017/stocks")
