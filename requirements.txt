@@ -9,6 +9,7 @@ configparser==3.5.0
 cycler==0.10.0
 Flask==0.12.2
 Flask-MySQL==1.4.0
+Flask-WTF==0.14.2
 idna==2.6
 idna-ssl==1.0.0
 itsdangerous==0.24
@@ -36,4 +37,5 @@ sklearn==0.0
 urllib3==1.22
 Werkzeug==0.14.1
 wrapt==1.10.11
+WTForms==2.1
 yarl==1.1.0
