@@ -13,10 +13,10 @@ def iex_database(alist):
     # a = string.ascii_uppercase
     # b = a.replace('ABCDEFGHIJKLMNOPQR', '')
     for sym in alist:
-        if not sym.startswith('A'):
+        # if not sym.startswith('A'):
         # if sym[0] not in list(b):
         # if sym in ['SZC^#']:
-            continue
+            # continue
         print(sym)
         stocksEarnings = iex.stocksEarnings(sym)
         stocksFinancials = iex.stocksFinancials(sym)
