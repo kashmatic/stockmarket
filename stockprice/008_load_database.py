@@ -6,8 +6,8 @@ from lib.iex_criteria import IexCriteria
 
 from datetime import date as datetoday
 
-# DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
-DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
+DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
+# DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
 CURSOR = DB.cursor()
 
 client = MongoClient("mongodb://localhost:27017/stocks")
@@ -49,6 +49,7 @@ def replaceNone(adic):
 def create_ticker_database(tname):
     sql = '''
     CREATE TABLE `{}` (
+    `id` int(15) NOT NULL AUTO_INCREMENT,
     `ticker` varchar(11) NOT NULL,
     `marketCap` BIGINT unsigned,
     `debt` BIGINT unsigned,
@@ -61,20 +62,31 @@ def create_ticker_database(tname):
     `ratioPEttm` double,
     `ratioPEforward` double,
     `date` date NOT NULL,
-    PRIMARY KEY (`ticker`)
+    PRIMARY KEY (`id`)
     )
     '''.format(tname)
     execute_command(sql)
 
+def each_symbol():
+    for sym in mongodb.collection_names():
+        yield sym
+
 def load_database():
     iex = IEX()
-    for sym in iex.symbols():
+    for sym in each_symbol():
         print(sym)
-        stocksEarnings = iex.stocksEarnings(sym)
-        stocksFinancials = iex.stocksFinancials(sym)
-        stocksKeyStats = iex.stocksKeyStats(sym)
-        stocksQuote = iex.stocksQuote(sym)
-        stocksChart1y = iex.stocksChart1y(sym)
+        # stocksEarnings = iex.stocksEarnings(sym)
+        # stocksFinancials = iex.stocksFinancials(sym)
+        # stocksKeyStats = iex.stocksKeyStats(sym)
+        # stocksQuote = iex.stocksQuote(sym)
+        # stocksChart1y = iex.stocksChart1y(sym)
+        # finviz = {}
+        stocksEarnings = mongodb[sym].find_one({},{"stocksEarnings":1, "_id":0})['stocksEarnings']
+        stocksFinancials = mongodb[sym].find_one({},{"stocksFinancials":1, "_id":0})['stocksFinancials']
+        stocksKeyStats = mongodb[sym].find_one({},{"stocksKeyStats":1, "_id":0})['stocksKeyStats']
+        stocksQuote = mongodb[sym].find_one({},{"stocksQuote":1, "_id":0})['stocksQuote']
+        stocksChart1y = mongodb[sym].find_one({},{"stocksChart1y":1, "_id":0})['stocksChart1y']
+        finviz = mongodb[sym].find_one({},{"finviz":1, "_id":0})['finviz']
         data = IexCriteria(
             sym,
             stocksEarnings,
@@ -82,12 +94,14 @@ def load_database():
             stocksKeyStats,
             stocksQuote,
             stocksChart1y,
-            {}
+            finviz
         )
         adic = insertobj()
         adic['sym'] = sym
         if data.get_marketcap():
             adic['marketCap'] = data.get_marketcap()
+        else:
+            continue
         if data.get_debt():
             adic['debt'] = data.get_debt()
         if adic['debt'] and adic['marketCap']:
@@ -120,5 +134,5 @@ def load_database():
         DB.commit()
 
 if __name__ == '__main__':
-    create_ticker_database('stocks')
+    # create_ticker_database('stocks')
     load_database()

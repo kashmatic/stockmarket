@@ -1,0 +1,38 @@
+swagger: '2.0'
+info:
+  version: '0.0.1'
+  title: S1 Arlington API
+host: 10.84.17.2
+basePath: /
+schemes:
+  - https
+
+paths:
+  '/api/v1/data/controller/core/version/appliance':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: show version
+  '/api/v1/data/controller/applications/bcf/info/fabric/switch':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: show switch
+  '/api/v1/data/controller/cluster':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: show controller
+  '/api/v1/data/controller/os/action/time?select=system-time':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: show clock

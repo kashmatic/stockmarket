@@ -1,0 +1,547 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: "2.0"
+
+# This is your document metadata
+info:
+  version: "1.0.0"
+  title: Notify Service
+host: localhost:10010
+basePath: /notify
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  '/':
+    x-swagger-router-controller: notify
+    # This is a HTTP operation
+    get:
+      operationId: getNotifications
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets `Notification` objects.
+        Optional query param of **size** determines
+        size of returned array
+      # This is array of GET operation parameters:
+      parameters:
+        # An example parameter that is in query and is required
+        -
+          name: size
+          in: query
+          description: Size of returned array
+          required: false
+          type: number
+          format: integer
+          default: 25
+        -
+          name: offset
+          in: query
+          description: How many notifications to skip before returning the array. Used for paging
+          required: false
+          type: number
+          format: integer
+          default: 0
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        '200':
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/GetNotificationListResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+    post:
+      operationId: addNotification
+      description:
+        Adds new notification to the system
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: notification
+          description: The notification to create
+          required: true
+          schema:
+            $ref: '#/definitions/Notification'
+      responses:
+        '201':
+          description: Successful creation of a notification
+          schema:
+            properties:
+              id:
+                title: ID of newly created notification
+                type: string
+        '400':
+          description: Issue with creation of notification
+  '/next/':
+    x-swagger-router-controller: notify
+    patch:
+      operationId: getNextOpenNotificationJob
+      description: Based on priority rules, set the next open notification job to 'pending'
+      responses:
+        '200':
+          description: Successfully retrieved next notification job and update its state
+          schema:
+            $ref: '#/definitions/NotificationJobResponse'
+        '400':
+          description: Error updating the notification job state
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: No notification jobs in the open state
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/template/':
+    x-swagger-router-controller: template
+    get:
+      operationId: getTemplates
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets `Template` objects.
+        Optional query param of **size** determines
+        size of returned array
+      # This is array of GET operation parameters:
+      parameters:
+        # An example parameter that is in query and is required
+        -
+          name: size
+          in: query
+          description: Size of the returned array
+          required: false
+          type: number
+          format: integer
+          default: 25
+        -
+          name: offset
+          in: query
+          description: How many templates to skip before returning the array. Used for paging
+          required: false
+          type: number
+          format: integer
+          default: 0
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        '200':
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            $ref: '#/definitions/GetTemplateListResponse'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+    post:
+      operationId: addTemplate
+      description:
+        Adds new notification template to the system. If this is the initial notification by the given template name, then it will be assigned version 1. All subsequent post to the same template name will have its version incremented. Templates cannot be removed. Only updated versions may be added. When a new notification is posted to the system, it will be bound by id to the latest version of the template.
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: template
+          description: The notification template to create
+          required: true
+          schema:
+            $ref: '#/definitions/Template'
+      responses:
+        '201':
+          description: Successful creation of a notification template
+          schema:
+            properties:
+              id:
+                title: ID of newly created notification template
+                type: string
+        '400':
+          description: Error with creation of notification template
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/template/findByName/':
+    x-swagger-router-controller: template
+    get:
+      operationId: getTemplateByName
+      description:
+        Retrieve all versions of the named template
+      parameters:
+        - name: name
+          type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          description: Notification template found by name. Will return empty array if template name is not found
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Template'
+        '400':
+          description: Error with validation
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/template/findLatestByName/':
+    x-swagger-router-controller: template
+    get:
+      operationId: getTemplateLatestByName
+      description:
+        Retrieve latest version of the named template
+      parameters:
+        - name: name
+          type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          description: Latest notification template found by name
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Template'
+        '400':
+          description: Bad request
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/template/{id}':
+    x-swagger-router-controller: template
+    get:
+      operationId: getTemplate
+      description: Retrieve specified notification template by template id
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Template'
+        '404':
+          description: Specified notification template is not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/{id}':
+    x-swagger-router-controller: notify
+    get:
+      operationId: getNotification
+      description: Retrieve specified notification
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/NotificationResponse'
+        '404':
+          description: Specified notification is not found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/job/{id}/fail/':
+    x-swagger-router-controller: notify
+    patch:
+      operationId: setNotificationJobToFail
+      description: Set the notification job status to failure. Should only be called from notify-worker
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Unsuccessful processing of a notification job
+          schema:
+            $ref: '#/definitions/GeneralResponse'
+        '400':
+          description: Error attempting to set job state to failure.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Could not find specified job id
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/job/{id}/success/':
+    x-swagger-router-controller: notify
+    patch:
+      operationId: setNotificationJobToSuccess
+      description: Set the notification job status to success. Should only be called from notify-worker
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Successful processing of a notification job
+          schema:
+            $ref: '#/definitions/GeneralResponse'
+        '400':
+          description: Error attempting to set job state to success
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: Could not find specified job id
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/job/{id}':
+    x-swagger-router-controller: notify
+    get:
+      operationId: getNotificationJobStatus
+      description: Retrieve specified notification job status
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Return the complete notification job including its state.
+          schema:
+            $ref: '#/definitions/NotificationStatus'
+        '404':
+          description: Could not find specified job id
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+  '/{id}/cancel/':
+    x-swagger-router-controller: notify
+    patch:
+      operationId: cancelNotification
+      description: Cancel the notification but not delete it
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Successfully cancellation of a notification
+          schema:
+            $ref: '#/definitions/GeneralResponse'
+        # default:
+        #   description: Error
+        #   schema:
+        #     $ref: '#/definitions/ErrorResponse'
+# complex objects have schema definitions:
+definitions:
+  Notification:
+    type: object
+    required:
+      - method
+      - priority
+      - to
+    properties:
+      method:
+        type: string
+        enum: [email, sms]
+        description: type of notification
+      priority:
+        type: integer
+        minimum: 0
+        maximum: 3
+        description: priority level from 0 - Outage to 3 - Info
+      severity:
+        type: string
+        enum: [high, normal, low]
+        description: importance of the notification
+        default: normal
+      from:
+        type: string
+        default: noreply@vcpui-arlington
+        example: 'VCP <vcp@verizonwireless.com'
+      subject:
+        type: string
+      to:
+        description: 'This can be either a string, an array of strings or an array of "to" objects'
+        example:
+          - name: Joe Smith
+            email: 'joe.smith@verizonwireless.com'
+          - name: Jane Doe
+            locale: 'es'
+            email: 'jane.doe@verizonwireless.com'
+      content:
+        type: string
+        description: content string
+      isHTML:
+        type: boolean
+        description: content will be treated as HTML
+      createdBy:
+        type: string
+        description: user that created the notification
+      templateName:
+        type: string
+        description: name of template
+      templateValues:
+        type: object
+        additionalProperties: true
+  NotificationResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      method:
+        type: string
+        description: method of notification
+        enum: [email, sms]
+      priority:
+        type: integer
+        minimum: 0
+        maximum: 3
+        description: priority level from 0 - Outage to 3 - Info
+      severity:
+        type: string
+        enum: [high, normal, low]
+        description: importance of the notification
+        default: normal
+      from:
+        type: string
+      subject:
+        type: string
+      content:
+        type: string
+      isHTML:
+        type: boolean
+        description: content will be treated as HTML
+      createdBy:
+        type: string
+        description: user that created the notification
+      templateId:
+        type: string
+      templateValues:
+        additionalProperties: true
+  NotificationJobResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      state:
+        type: string
+        enum: [open, pending, success, failure, cancelled]
+      priority:
+        type: integer
+      to:
+        $ref: '#/definitions/To'
+      NotificationId:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+      updateAt:
+        type: string
+        format: date-time
+  Template:
+    type: object
+    required:
+      - name
+      - template
+    properties:
+      name:
+        type: string
+      version:
+        type: number
+      description:
+        type: string
+      isHTML:
+        type: boolean
+        description: content will be treated as HTML
+      template:
+        type: array
+        items:
+          $ref: '#/definitions/TemplateContent'
+      parameters:
+        type: array
+        items:
+          $ref: '#/definitions/TemplateParam'
+  TemplateContent:
+    type: object
+    required:
+      - content
+    properties:
+      locale:
+        type: string
+        default: __default__
+      content:
+        type: string
+  TemplateParam:
+    type: object
+    properties:
+      name:
+        type: string
+      type:
+        type: string
+      format:
+        additionalProperties: true
+      description:
+        type: string
+  To:
+    type: object
+    properties:
+      name:
+        type: string
+      locale:
+        type: string
+        default: __default__
+      email:
+        type: string
+        format: email
+      mobile:
+        type: string
+  NotificationStatus:
+    type: object
+    properties:
+      id:
+        type: string
+      state:
+        type: string
+        enum: [open, pending, success, failure, cancelled]
+      to:
+        $ref: '#/definitions/To'
+      NotificationId:
+        type: string
+      createdAt:
+        type: string
+        format: date-time
+      updateAt:
+        type: string
+        format: date-time
+  GetNotificationListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/NotificationResponse'
+  GetTemplateListResponse:
+    type: array
+    items:
+      $ref: '#/definitions/Template'
+  GeneralResponse:
+    type: object
+    properties:
+      response:
+        type: string
+        enum: [ success, failure ]
+        description: returns 'success' if successful; 'failure' if not
+    required:
+      - response
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string

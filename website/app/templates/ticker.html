@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Ticker{% endblock %}
+{% block body %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4>Result ({{ result | length }})</h4>
+  </div>
+  <div class="panel-body">
+
+    <table class="table table-condenced table-bordered tablefont">
+      <tr>
+        <th>Ticker</th>
+        <th>Market Cap</th>
+        <th>Ratio of Debt and Marketcap</th>
+        <th>Cash</th>
+        <th>Ratio PE</th>
+        <th>EBITDA</th>
+        <th>Ratio PE ttm</th>
+        <th>Ratio PE forward</th>
+        <th style="width: 150px">Date</th>
+      </tr>
+      {% for row in result %}
+        <tr>
+          <td>{{ row[0] }}</td>
+          <td>{{ row[1] }}</td>
+          <td>{{ row[2] }}</td>
+          <td>{{ row[3] }}</td>
+          <td>{{ row[4] }}</td>
+          <td>{{ row[5] }}</td>
+          <td>{{ row[6] }}</td>
+          <td>{{ row[7] }}</td>
+          <td>{{ row[8] }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+  </div>
+</div>
+
+{% endblock %}

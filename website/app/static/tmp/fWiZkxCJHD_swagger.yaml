@@ -1,0 +1,66 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: HP API
+  description: RESTful API to HP5900 and HP5930
+host: hpapi.core.vzwops.com
+basePath: /
+schemes:
+  - http
+
+paths:
+  '/vlans':
+    get:
+      summary: Get all the VLAN information
+      description: Returns a list of VLANS
+      produces:
+        - application/json
+      parameters:
+        - name: ipaddr
+          in: header
+          description: IP address of the HP5900 or HP5930
+          required: true
+          type: string
+        - name: username
+          in: query
+          description: Username to access the HP
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: Password to access the HP
+          required: true
+          type: string
+      responses:
+      200:
+        description: A list of VLANS
+  '/vlans/{vlan_id}':
+    get:
+      summary: Get VLAN information for a given VLAN id
+      description: Returns a given VLAN id
+      produces:
+        - application/json
+      parameters:
+        - name: vlan_id
+          in: path
+          description: VLAN id
+          required: true
+          type: string
+        - name: ipaddr
+          in: header
+          description: IP address of the HP5900 or HP5930
+          required: true
+          type: string
+        - name: username
+          in: query
+          description: Username to access the HP
+          required: true
+          type: string
+        - name: password
+          in: query
+          description: Password to access the HP
+          required: true
+          type: string
+      responses:
+      200:
+        description: A list of VLANS

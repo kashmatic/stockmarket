@@ -23,7 +23,22 @@ def iex_database(alist):
         stocksKeyStats = iex.stocksKeyStats(sym)
         stocksQuote = iex.stocksQuote(sym)
         stocksChart1y = iex.stocksChart1y(sym)
-        DB[sym].insert({'stocksKeyStats': stocksKeyStats,
+        id = DB[sym].find_one({}, {"_id": 1})
+        if id:
+            DB[sym].find_one_and_update(
+                {"_id": ObjectId(id['_id'])},
+                {"$set":
+                    {
+                    'stocksKeyStats': stocksKeyStats,
+                    'stocksFinancials': stocksFinancials,
+                    'stocksEarnings': stocksEarnings,
+                    'stocksQuote': stocksQuote,
+                    'stocksChart1y': stocksChart1y
+                    }
+                },
+                upsert=True)
+        else:
+            DB[sym].insert({'stocksKeyStats': stocksKeyStats,
             'stocksFinancials': stocksFinancials,
             'stocksEarnings': stocksEarnings,
             'stocksQuote': stocksQuote,
@@ -34,7 +49,11 @@ def iex_database_update(alist):
         print(sym)
         jobj = iex.stocksChart1y(sym)
         id = DB[sym].find_one({}, {"_id": 1})
-        DB[sym].update_one({"_id": ObjectId(id['_id'])}, {"$set": {'stocksChart1y': jobj}})
+        DB[sym].update_one(
+            {"_id": ObjectId(id['_id'])},
+            {"$set": {'stocksChart1y': jobj}},
+            upsert=True
+            )
 
 def finviz(alist):
     for sym in alist:
@@ -46,6 +65,7 @@ def finviz(alist):
 
 if __name__ == "__main__":
     iex = IEX()
-    # iex_database(iex.symbols())
+    list_of_symbols = iex.symbols()
+    iex_database(list_of_symbols)
     # iex_database_update(iex.symbols())
-    finviz(iex.symbols())
+    # finviz(list_of_symbols)

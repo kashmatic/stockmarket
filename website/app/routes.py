@@ -11,7 +11,13 @@ DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket'
 CURSOR = DB.cursor()
 
 class FilterForm(FlaskForm):
-    marketCap = StringField('Market Cap:', validators=[DataRequired()])
+    marketCap = StringField('Market Cap:')
+    ratioDebtMarketcap = StringField('ratio Debt to Marketcap:')
+    cash = StringField('Cash:')
+    pe = StringField('PE:')
+    ebitda = StringField('EBITDA:')
+    pettm = StringField('PE ttm:')
+    peforward = StringField('PE forward:')
     submit = SubmitField('Update')
 
 def setfilter(obj):
@@ -32,18 +38,43 @@ def index():
         val = request.form.get('marketCap')
         if val:
             alist.append("marketCap > {}".format(val))
+        val = request.form.get('ratioDebtMarketcap')
+        if val:
+            alist.append("ratioDebtMarketcap < {}".format(val))
+        val = request.form.get('cash')
+        if val:
+            alist.append("cash > {}".format(val))
+        val = request.form.get('pe')
+        if val:
+            alist.append("ratioPE < {}".format(val))
+        val = request.form.get('ebitda')
+        if val:
+            alist.append("ebitda > {}".format(val))
+        val = request.form.get('pettm')
+        if val:
+            alist.append("ratioPEttm < {}".format(val))
+        val = request.form.get('peforward')
+        if val:
+            alist.append("ratioPEforward < {}".format(val))
         print(alist)
 
 
     try:
         if alist:
-            sql = 'SELECT * FROM stocks WHERE {}'.format(" AND ".join(alist))
+            sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE {}'.format(" AND ".join(alist))
         else:
-            sql = 'SELECT * FROM stocks'
+            sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks'
         print(sql)
         CURSOR.execute(sql)
-        alist = CURSOR.fetchall()
+        result = CURSOR.fetchall()
     except Exception as e:
         print(e.msg)
 
-    return render_template('hello.html', alist=alist, form=form)
+    return render_template('list.html', result=result, form=form)
+
+@app.route('/<string:symbol>')
+def ticker(symbol):
+    sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE ticker like "{}"'.format(symbol)
+    CURSOR.execute(sql)
+    result = CURSOR.fetchall()
+    return render_template('ticker.html', result=result)

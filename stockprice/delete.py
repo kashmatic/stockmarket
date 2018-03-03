@@ -9,5 +9,7 @@ db = client['stocks']
 for sym in db.collection_names():
     print(sym)
     # db[sym].find({}, {"stocksFinancials.financials.totalDebt": 1, "_id": 0})
-    if not sym.startswith('S'):
-        db[sym].drop()
+    # if not sym.startswith('S'):
+    #     db[sym].drop()
+    for key in db[sym].find_one({}):
+        print(key)

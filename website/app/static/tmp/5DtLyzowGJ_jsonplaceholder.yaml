@@ -1,0 +1,72 @@
+swagger: '2.0'
+info:
+  version: '0.0.1'
+  title: holder API
+host: jsonplaceholder.typicode.com
+basePath: /
+schemes:
+  - https
+
+paths:
+  '/posts':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Pokemon.
+    post:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Pokemon.
+  '/posts/{id}':
+    get:
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: something
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Pokemon.
+    put:
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: something
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Pokemon.
+    patch:
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: something
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Pokemon.
+    delete:
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: something
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Pokemon.

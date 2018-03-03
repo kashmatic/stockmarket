@@ -33,7 +33,10 @@ class IexCriteria:
 
     def get_marketcap(self):
         if 'marketcap' in self.stocksKeyStats:
-            return int(self.stocksKeyStats['marketcap'])
+            val = int(self.stocksKeyStats['marketcap'])
+            if val < 500000:
+                return None
+            return val
         else:
             return None
 
@@ -171,7 +174,7 @@ class IexCriteria:
 
     def get_ebitda(self):
         if 'EBITDA' in self.stocksKeyStats:
-            self.stocksKeyStats['EBITDA']
+            return self.stocksKeyStats['EBITDA']
         else:
             return None
 
@@ -212,7 +215,7 @@ class IexCriteria:
         return True, "Last 7 days ratio > {}\t{}".format(num, ratio)
 
     def get_finvizpettm(self):
-        if not self.finviz or 'P/E' not in self.finviz:
+        if not self.finviz or 'P/E' not in self.finviz or not self.finviz['P/E']:
             return None
         return float(self.finviz['P/E'])
 
@@ -234,7 +237,7 @@ class IexCriteria:
         return True
 
     def get_finvizpeforward(self):
-        if not self.finviz or 'Forward P/E' not in self.finviz:
+        if not self.finviz or 'Forward P/E' not in self.finviz or not self.finviz['Forward P/E']:
             return None
         return float(self.finviz['Forward P/E'])
 
@@ -300,4 +303,3 @@ class IexCriteria:
         #     abool, msg = fn
         #     if not abool:
         #         return abool, msg
-22834758609

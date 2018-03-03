@@ -1,0 +1,274 @@
+# Example YAML to get you started quickly.
+# Be aware that YAML has indentation based scoping.
+# Code completion support is available so start typing for available options.
+swagger: "2.0"
+
+# This is your document metadata
+info:
+  version: "1.0.0"
+  title: Notify Service
+host: localhost:10010
+basePath: /notify
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  '/':
+    x-swagger-router-controller: notify
+    # This is a HTTP operation
+    get:
+      operationId: getNotifications
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets `Notification` objects.
+        Optional query param of **size** determines
+        size of returned array
+      # This is array of GET operation parameters:
+      parameters:
+        # An example parameter that is in query and is required
+        -
+          name: size
+          in: query
+          description: Size of returned array
+          required: false
+          type: number
+          format: integer
+          default: 25
+        -
+          name: offset
+          in: query
+          description: How many notifications to skip before returning the array. Used for paging
+          required: false
+          type: number
+          format: integer
+          default: 0
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        '200':
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+    post:
+      operationId: addNotification
+      description:
+        Adds new notification to the system
+      consumes:
+        - application/json
+      responses:
+        '201':
+          description: Successful creation of a notification
+          schema:
+            properties:
+              id:
+                title: ID of newly created notification
+                type: string
+        '400':
+          description: Issue with creation of notification
+  '/next/':
+    x-swagger-router-controller: notify
+    patch:
+      operationId: getNextOpenNotificationJob
+      description: Based on priority rules, set the next open notification job to 'pending'
+      responses:
+        '200':
+          description: Successfully retrieved next notification job and update its state
+        '400':
+          description: Error updating the notification job state
+        '404':
+          description: No notification jobs in the open state
+  '/template/':
+    x-swagger-router-controller: template
+    get:
+      operationId: getTemplates
+      # Describe this verb here. Note: you can use markdown
+      description: |
+        Gets `Template` objects.
+        Optional query param of **size** determines
+        size of returned array
+      # This is array of GET operation parameters:
+      parameters:
+        # An example parameter that is in query and is required
+        -
+          name: size
+          in: query
+          description: Size of the returned array
+          required: false
+          type: number
+          format: integer
+          default: 25
+        -
+          name: offset
+          in: query
+          description: How many templates to skip before returning the array. Used for paging
+          required: false
+          type: number
+          format: integer
+          default: 0
+      # Expected responses for this operation:
+      responses:
+        # Response code
+        '200':
+          description: Successful response
+          # A schema describing your response object.
+          # Use JSON Schema format
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+    post:
+      operationId: addTemplate
+      description:
+        Adds new notification template to the system. If this is the initial notification by the given template name, then it will be assigned version 1. All subsequent post to the same template name will have its version incremented. Templates cannot be removed. Only updated versions may be added. When a new notification is posted to the system, it will be bound by id to the latest version of the template.
+      consumes:
+        - application/json
+      responses:
+        '201':
+          description: Successful creation of a notification template
+          schema:
+            properties:
+              id:
+                title: ID of newly created notification template
+                type: string
+        '400':
+          description: Error with creation of notification template
+  '/template/findByName/':
+    x-swagger-router-controller: template
+    get:
+      operationId: getTemplateByName
+      description:
+        Retrieve all versions of the named template
+      parameters:
+        - name: name
+          type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          description: Notification template found by name. Will return empty array if template name is not found
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: array
+        '400':
+          description: Error with validation
+  '/template/findLatestByName/':
+    x-swagger-router-controller: template
+    get:
+      operationId: getTemplateLatestByName
+      description:
+        Retrieve latest version of the named template
+      parameters:
+        - name: name
+          type: string
+          in: query
+          required: true
+      responses:
+        '200':
+          description: Latest notification template found by name
+          # A schema describing your response object.
+          # Use JSON Schema format
+          schema:
+            type: array
+        '400':
+          description: Bad request
+  '/template/{id}':
+    x-swagger-router-controller: template
+    get:
+      operationId: getTemplate
+      description: Retrieve specified notification template by template id
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Specified notification template is not found
+  '/{id}':
+    x-swagger-router-controller: notify
+    get:
+      operationId: getNotification
+      description: Retrieve specified notification
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Specified notification is not found
+  '/job/{id}/fail/':
+    x-swagger-router-controller: notify
+    patch:
+      operationId: setNotificationJobToFail
+      description: Set the notification job status to failure. Should only be called from notify-worker
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Unsuccessful processing of a notification job
+        '400':
+          description: Error attempting to set job state to failure.
+        '404':
+          description: Could not find specified job id
+  '/job/{id}/success/':
+    x-swagger-router-controller: notify
+    patch:
+      operationId: setNotificationJobToSuccess
+      description: Set the notification job status to success. Should only be called from notify-worker
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Successful processing of a notification job
+        '400':
+          description: Error attempting to set job state to success
+        '404':
+          description: Could not find specified job id
+  '/job/{id}':
+    x-swagger-router-controller: notify
+    get:
+      operationId: getNotificationJobStatus
+      description: Retrieve specified notification job status
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Return the complete notification job including its state.
+        '404':
+          description: Could not find specified job id
+  '/{id}/cancel/':
+    x-swagger-router-controller: notify
+    patch:
+      operationId: cancelNotification
+      description: Cancel the notification but not delete it
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        '200':
+          description: Successfully cancellation of a notification

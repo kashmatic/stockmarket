@@ -1,0 +1,38 @@
+swagger: '2.0'
+info:
+  version: '0.0.1'
+  title: S3 Arlington API
+host: 10.84.17.2
+basePath: /api/v1/
+schemes:
+  - https
+
+paths:
+  '/data/controller/core/version/appliance':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: show version
+  '/data/controller/applications/bcf/info/fabric/switch':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: show switch
+  '/data/controller/cluster':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: show controller
+  '/data/controller/os/action/time':
+    get:
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: show clock

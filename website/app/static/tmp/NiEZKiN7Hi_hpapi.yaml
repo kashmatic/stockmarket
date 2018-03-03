@@ -1,0 +1,38 @@
+swagger: "2.0"
+
+info:
+  version: 1.0.0
+  title: HP API
+  description: RESTful API to HP5900 and HP5930
+
+schemes:
+  - http
+host: localhost:3000
+basePath: /
+
+paths:
+  /vlans:
+    get:
+      summary: This is summary
+      description: This is description
+      responses:
+        200:
+          description: 200 description
+          schema:
+            type: array
+  /acls: {}
+
+  # /vlans:
+  #   get:
+  #     summary: Get all the VLAN information
+  #     description: Returns a list of VLANS
+  #     responses:
+  #       200:
+  #         description: A list of VLANS
+  # /acl:
+  #   get:
+  #     summary: Get all the VLAN information
+  #     description: Returns a list of VLANS
+  #     responses:
+  #       200:
+  #         description: A list of VLANS
