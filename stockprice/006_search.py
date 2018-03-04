@@ -3,8 +3,8 @@ from time import localtime, strftime
 
 from lib.iex import IEX
 from lib.iex_criteria import IexCriteria
-from lib.tickerdatabase import TickerDatabase
-from lib.mongodatabase import listTickers
+from lib.ticker_database import TickerDatabase
+from lib.mongo_database import listTickers
 
 import yaml
 

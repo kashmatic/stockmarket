@@ -1,6 +1,6 @@
 from lib.iex import IEX
 from lib.finviz import Finviz
-from lib.tickerdatabase import TickerDatabase
+from lib.ticker_database import TickerDatabase
 
 import string
 
