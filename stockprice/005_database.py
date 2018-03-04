@@ -1,57 +1,37 @@
-from pymongo import MongoClient
-from bson.objectid import ObjectId
-
 from lib.iex import IEX
 from lib.finviz import Finviz
+from lib.tickerdatabase import TickerDatabase
 
 import string
 
-client = MongoClient("mongodb://localhost:27017/stocks")
-DB = client['stocks']
-
 def iex_database(alist):
-    # a = string.ascii_uppercase
-    # b = a.replace('ABCDEFGHIJKLMNOPQR', '')
     for sym in alist:
-        # if not sym.startswith('A'):
+        if not sym.startswith('A'):
         # if sym[0] not in list(b):
         # if sym in ['SZC^#']:
-            # continue
+            continue
         print(sym)
         stocksEarnings = iex.stocksEarnings(sym)
         stocksFinancials = iex.stocksFinancials(sym)
         stocksKeyStats = iex.stocksKeyStats(sym)
         stocksQuote = iex.stocksQuote(sym)
-        stocksChart1y = iex.stocksChart1y(sym)
-        id = DB[sym].find_one({}, {"_id": 1})
-        if id:
-            DB[sym].find_one_and_update(
-                {"_id": ObjectId(id['_id'])},
-                {"$set":
-                    {
-                    'stocksKeyStats': stocksKeyStats,
-                    'stocksFinancials': stocksFinancials,
-                    'stocksEarnings': stocksEarnings,
-                    'stocksQuote': stocksQuote,
-                    'stocksChart1y': stocksChart1y
-                    }
-                },
-                upsert=True)
-        else:
-            DB[sym].insert({'stocksKeyStats': stocksKeyStats,
-            'stocksFinancials': stocksFinancials,
-            'stocksEarnings': stocksEarnings,
-            'stocksQuote': stocksQuote,
-            'stocksChart1y': stocksChart1y})
+        stocksChart2y = iex.stocksChart2y(sym)
+
+        td = TickerDatabase(sym)
+        td.put_stocksEarnings(stocksEarnings)
+        td.put_stocksFinancials(stocksFinancials)
+        td.put_stocksKeyStats(stocksKeyStats)
+        td.put_stocksQuote(stocksQuote)
+        td.put_stocksChart2y(stocksChart2y)
 
 def iex_database_update(alist):
     for sym in alist:
         print(sym)
-        jobj = iex.stocksChart1y(sym)
+        jobj = iex.stocksChart2y(sym)
         id = DB[sym].find_one({}, {"_id": 1})
         DB[sym].update_one(
             {"_id": ObjectId(id['_id'])},
-            {"$set": {'stocksChart1y': jobj}},
+            {"$set": {'stocksChart2y': jobj}},
             upsert=True
             )
 
@@ -60,12 +40,14 @@ def finviz(alist):
         print(sym)
         f = Finviz()
         jobj = f.get_stat(sym)
-        id = DB[sym].find_one({}, {"_id": 1})
-        DB[sym].update_one({"_id": ObjectId(id['_id'])}, {"$set": {'finviz': jobj}})
+        td = TickerDatabase(sym)
+        td.put_finviz(jobj)
+        # id = DB[sym].find_one({}, {"_id": 1})
+        # DB[sym].update_one({"_id": ObjectId(id['_id'])}, {"$set": {'finviz': jobj}})
 
 if __name__ == "__main__":
     iex = IEX()
     list_of_symbols = iex.symbols()
-    iex_database(list_of_symbols)
+    # iex_database(list_of_symbols)
     # iex_database_update(iex.symbols())
-    # finviz(list_of_symbols)
+    finviz(list_of_symbols)

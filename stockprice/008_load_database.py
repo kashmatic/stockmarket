@@ -79,13 +79,13 @@ def load_database():
         # stocksFinancials = iex.stocksFinancials(sym)
         # stocksKeyStats = iex.stocksKeyStats(sym)
         # stocksQuote = iex.stocksQuote(sym)
-        # stocksChart1y = iex.stocksChart1y(sym)
+        # stocksChart2y = iex.stocksChart2y(sym)
         # finviz = {}
         stocksEarnings = mongodb[sym].find_one({},{"stocksEarnings":1, "_id":0})['stocksEarnings']
         stocksFinancials = mongodb[sym].find_one({},{"stocksFinancials":1, "_id":0})['stocksFinancials']
         stocksKeyStats = mongodb[sym].find_one({},{"stocksKeyStats":1, "_id":0})['stocksKeyStats']
         stocksQuote = mongodb[sym].find_one({},{"stocksQuote":1, "_id":0})['stocksQuote']
-        stocksChart1y = mongodb[sym].find_one({},{"stocksChart1y":1, "_id":0})['stocksChart1y']
+        stocksChart2y = mongodb[sym].find_one({},{"stocksChart2y":1, "_id":0})['stocksChart2y']
         finviz = mongodb[sym].find_one({},{"finviz":1, "_id":0})['finviz']
         data = IexCriteria(
             sym,
@@ -93,7 +93,7 @@ def load_database():
             stocksFinancials,
             stocksKeyStats,
             stocksQuote,
-            stocksChart1y,
+            stocksChart2y,
             finviz
         )
         adic = insertobj()

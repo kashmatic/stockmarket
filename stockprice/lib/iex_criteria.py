@@ -1,28 +1,25 @@
 import yaml
 
+from .tickerdatabase import TickerDatabase
+
+
 class IexCriteria:
-    def __init__(self,
-            symbol,
-            stocksEarnings,
-            stocksFinancials,
-            stocksKeyStats,
-            stocksQuote,
-            stocksChart1y,
-            finviz):
+    def __init__(self, symbol):
+        td = TickerDatabase(symbol)
         self.symbol = symbol
-        self.stocksEarnings = stocksEarnings
-        self.stocksFinancials = stocksFinancials
-        self.stocksKeyStats = stocksKeyStats
-        self.stocksQuote = stocksQuote
-        self.stocksChart1y = stocksChart1y
-        self.finviz = finviz
+        self.stocksEarnings = td.get_stocksEarnings()
+        self.stocksFinancials = td.get_stocksFinancials()
+        self.stocksKeyStats = td.get_stocksKeyStats()
+        self.stocksQuote = td.get_stocksQuote()
+        self.stocksChart2y = td.get_stocksChart2y()
+        self.finviz = td.get_finviz()
         self.valuation = dict(
             marketcapMoreThan=None,
             debtRatioMarketcapLessThan=None,
             cashMoreThan=None,
             peCalculateLessThan=None,
             ebitdaMoreThan=None,
-            stocksChart1y=None,
+            stocksChart2y=None,
             finvizPEttmLessThan=None,
             finvizPEforwardLessThan=None
         )
@@ -194,7 +191,7 @@ class IexCriteria:
 
     def volumeChange(self, threshold, num):
         alist = []
-        for item in self.stocksChart1y:
+        for item in self.stocksChart2y:
             alist.append(item['volume'])
             # print(item['volume'])
         tsum = sum(alist)/52
@@ -208,10 +205,8 @@ class IexCriteria:
         ratio = last5/tsum
         if ratio < num:
             return False, "Last 7 days ratio < {}\t{}".format(num, ratio)
-        # print(tsum, last5, last5/tsum)
-        # print(self.stocksKeyStats['marketcap'])
         ## True
-        self.valuation['stocksChart1y'] = ratio
+        self.valuation['stocksChart2y'] = ratio
         return True, "Last 7 days ratio > {}\t{}".format(num, ratio)
 
     def get_finvizpettm(self):
