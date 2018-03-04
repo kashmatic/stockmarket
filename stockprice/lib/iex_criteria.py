@@ -1,6 +1,6 @@
 import yaml
 
-from .tickerdatabase import TickerDatabase
+from .ticker_database import TickerDatabase
 
 
 class IexCriteria:
@@ -194,7 +194,8 @@ class IexCriteria:
         for item in self.stocksChart2y:
             alist.append(item['volume'])
             # print(item['volume'])
-        tsum = sum(alist)/52
+        # tsum = sum(alist)/52
+        tsum = sum(alist)/104
         if tsum < threshold:
             return False, "Average volume < {}\t{}".format(threshold, tsum)
         last5 = sum(alist[-5:])
