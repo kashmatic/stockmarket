@@ -63,7 +63,8 @@ def index():
         if alist:
             sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE {}'.format(" AND ".join(alist))
         else:
-            sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks'
+            # sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks'
+            sql = 'SELECT * FROM stocks WHERE date IN (SELECT MAX(date) FROM stocks GROUP BY ticker);'
         print(sql)
         CURSOR.execute(sql)
         result = CURSOR.fetchall()
