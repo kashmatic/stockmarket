@@ -75,7 +75,7 @@ def index():
 
 @app.route('/<string:symbol>')
 def ticker(symbol):
-    sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE ticker like "{}"'.format(symbol)
+    sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE ticker like "{}" ORDER BY date desc'.format(symbol)
     CURSOR.execute(sql)
     result = CURSOR.fetchall()
     return render_template('ticker.html', result=result)
