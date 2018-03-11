@@ -5,8 +5,8 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 
 import mysql.connector as MS
-DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
-# DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
+# DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
+DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
 
 CURSOR = DB.cursor()
 
