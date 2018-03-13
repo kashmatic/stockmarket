@@ -11,7 +11,10 @@ class IEX:
 
     def get_data(self, url):
         r = requests.get(url)
-        return r.json()
+        if r.json():
+            return r.json()
+        else:
+            return None
 
     def symbols(self):
         alist = self.symbols_list()
