@@ -6,10 +6,10 @@ import string
 
 def iex_database(alist):
     for sym in alist:
-        # if not sym.startswith('A'):
+        if not sym.startswith('IDT'):
         # if sym[0] not in list(b):
         # if sym in ['SZC^#']:
-            # continue
+            continue
         print(sym)
         stocksEarnings = iex.stocksEarnings(sym)
         stocksFinancials = iex.stocksFinancials(sym)
@@ -48,6 +48,6 @@ def finviz(alist):
 if __name__ == "__main__":
     iex = IEX()
     list_of_symbols = iex.symbols()
-    # iex_database(list_of_symbols)
+    iex_database(list_of_symbols)
     # iex_database_update(iex.symbols())
-    finviz(list_of_symbols)
+    # finviz(list_of_symbols)

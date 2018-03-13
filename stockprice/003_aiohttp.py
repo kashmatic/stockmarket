@@ -30,12 +30,14 @@ async def financials(symbol):
         stocksEarnings = await fetch(session, URL_stocksEarnings.format(symbol))
         stocksKeyStats = await fetch(session, URL_stocksKeyStats.format(symbol))
         stocksQuote = await fetch(session, URL_stocksQuote.format(symbol))
-        ic = IexCriteria(stocksEarnings, stocksFinancials, stocksKeyStats, stocksQuote)
-        bool_marketcapMoreThan1B, msg_marketcapMoreThan1B = ic.marketcapMoreThan1B()
-        print("{}\t{}\t{}".format(symbol, bool_marketcapMoreThan1B, msg_marketcapMoreThan1B))
+        print(symbol)
+        # ic = IexCriteria(stocksEarnings, stocksFinancials, stocksKeyStats, stocksQuote)
+        # bool_marketcapMoreThan1B, msg_marketcapMoreThan1B = ic.marketcapMoreThan1B()
+        # print("{}\t{}\t{}".format(symbol, bool_marketcapMoreThan1B, msg_marketcapMoreThan1B))
 
 async def todo(symbols_list):
     for item in symbols_list:
+        asyncio.sleep(range(0, 5))
         await financials(item['symbol'])
 
 def main():

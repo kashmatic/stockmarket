@@ -11,7 +11,7 @@ class IEX:
 
     def get_data(self, url):
         r = requests.get(url)
-        if r.json():
+        if r.status_code == 200:
             return r.json()
         else:
             return None
