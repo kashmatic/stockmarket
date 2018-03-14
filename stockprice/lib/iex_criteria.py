@@ -29,7 +29,7 @@ class IexCriteria:
         self.valuation[key]['msg'] = msg
 
     def get_marketcap(self):
-        if 'marketcap' not in self.stocksKeyStats:
+        if not self.stocksKeyStats:
             return None
         if 'marketcap' in self.stocksKeyStats:
             val = int(self.stocksKeyStats['marketcap'])
