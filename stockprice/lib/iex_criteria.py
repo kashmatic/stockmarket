@@ -29,6 +29,8 @@ class IexCriteria:
         self.valuation[key]['msg'] = msg
 
     def get_marketcap(self):
+        if 'marketcap' not in self.stocksKeyStats:
+            return None
         if 'marketcap' in self.stocksKeyStats:
             val = int(self.stocksKeyStats['marketcap'])
             if val < 500000:
@@ -68,6 +70,9 @@ class IexCriteria:
         if debt <= 0:
             self.valuation[key] = 'debt (${:,.2f})'.format(debt)
             return True
+        if not marketcap:
+            self.valuation[key] = 'marketcap (N/A)'
+            return False
         if marketcap <= 0:
             self.valuation[key] = 'marketcap (${:,.2f})'.format(marketcap)
             return False
