@@ -195,7 +195,7 @@ class IexCriteria:
 
     def volumeChange(self, threshold, num):
         alist = []
-        if self.stocksChart2y:
+        if not self.stocksChart2y:
             return False, "No Chart 2y"
         for item in self.stocksChart2y:
             alist.append(item['volume'])
