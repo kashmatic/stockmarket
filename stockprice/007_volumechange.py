@@ -11,7 +11,8 @@ RATIO = 3
 def criteria(symbol):
     aobj = IexCriteria(symbol)
     abool, msg = aobj.volumeChange(THRESHOLD, RATIO)
-    print(abool, msg)
+    if abool:
+        print(symbol, abool, msg)
 
 def each_symbol():
     for sym in listTickers():
