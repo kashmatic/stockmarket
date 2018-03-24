@@ -2,7 +2,6 @@ import yaml
 
 from .ticker_database import TickerDatabase
 
-
 class IexCriteria:
     def __init__(self, symbol):
         td = TickerDatabase(symbol)
