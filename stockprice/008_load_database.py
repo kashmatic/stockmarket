@@ -37,6 +37,7 @@ def load_database():
         if data.get_finvizpeforward():
             adic['ratioPEforward'] = data.get_finvizpeforward()
         adic['date'] = datetoday.today().isoformat()
+        # adic['date'] = '2018-03-20'
         adic = replaceNone(adic)
         sql = '''
         INSERT INTO `stocks`

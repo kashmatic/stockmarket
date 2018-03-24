@@ -61,10 +61,12 @@ def index():
 
     try:
         if alist:
-            sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE {} AND date IN (SELECT MAX(date) FROM stocks GROUP BY ticker) ORDER by ticker;'.format(" AND ".join(alist))
+            # sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE {} AND date IN (SELECT MAX(date) FROM stocks GROUP BY ticker) ORDER by ticker;'.format(" AND ".join(alist))
+            sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE {} AND date IN (SELECT MAX(date) FROM stocks) ORDER by ticker;'.format(" AND ".join(alist))
         else:
             # sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks'
-            sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE date IN (SELECT MAX(date) FROM stocks GROUP BY ticker) ORDER by ticker;'
+            # sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE date IN (SELECT MAX(date) FROM stocks GROUP BY ticker) ORDER by ticker;'
+            sql = 'SELECT ticker, marketCap, ratioDebtMarketcap, cash, ratioPE, ebitda, ratioPEttm, ratioPEforward, date FROM stocks WHERE date IN (SELECT MAX(date) FROM stocks) ORDER by ticker;'
         print(sql)
         CURSOR.execute(sql)
         result = CURSOR.fetchall()
