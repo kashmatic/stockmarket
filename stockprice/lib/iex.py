@@ -1,4 +1,6 @@
 import requests
+import aiohttp
+
 URL = 'https://api.iextrading.com/1.0/'
 
 class IEX:
@@ -15,6 +17,11 @@ class IEX:
     def batch_call(self):
         url = "{}/stock/{}/batch?types=quote,earnings,stats,earnings,chart&range=2y".format(URL, self.symbol)
         return self.get_data(url)
+
+    def sync_call(self):
+        with async_timeout.timeout(10):
+            async with session.get(url) as response:
+            return await response.json()
 
     def get_data(self, url):
         r = requests.get(url)

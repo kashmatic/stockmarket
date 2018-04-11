@@ -19,7 +19,10 @@ def printit(symbol, args):
 def get_symbols():
     URL = 'https://api.iextrading.com/1.0/ref-data/symbols'
     r = requests.get(URL)
-    return r.json()
+    alist = []
+    for item in r.json():
+        alist.append(item['symbol'])
+    return alist
 
 async def fetch(session, url):
     with async_timeout.timeout(10):

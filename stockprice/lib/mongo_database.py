@@ -7,3 +7,6 @@ def listTickers():
     for sym in db.collection_names():
         print(sym)
         yield(sym)
+
+if __name__ == '__main__':
+    pass

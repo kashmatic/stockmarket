@@ -54,7 +54,7 @@ class MyAsync():
         Run the list of tasks and close the loop
         """
         self.loop.run_until_complete(asyncio.wait(self.tasks))
-        self.loop.run_until_complete(asyncio.sleep(0.250))
+        # self.loop.run_until_complete(asyncio.sleep(0.250))
         self.loop.close()
 
 if __name__ == "__main__":

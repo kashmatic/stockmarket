@@ -17,7 +17,10 @@ def printit(symbol, args):
 def get_symbols():
     URL = 'https://api.iextrading.com/1.0/ref-data/symbols'
     r = requests.get(URL)
-    return r.json()
+    alist = []
+    for item in r.json():
+        alist.append(item['symbol'])
+    return alist
 
 async def fetch(session, url):
     with async_timeout.timeout(10):
@@ -42,9 +45,10 @@ async def todo(symbols_list):
 
 def main():
     symbols_list = get_symbols()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(todo(symbols_list))
-    loop.close()
+    print(len(symbols_list))
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(todo(symbols_list))
+    # loop.close()
 
 if __name__ == "__main__":
     main()
