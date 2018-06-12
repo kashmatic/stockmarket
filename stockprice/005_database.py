@@ -3,13 +3,14 @@ from lib.finviz import Finviz
 from lib.ticker_database import TickerDatabase
 
 import string
+import argparse
 
 def iex_database(alist):
     for sym in alist:
         # if not sym.startswith('IDT'):
         # if sym[0] not in list(b):
-        # if sym in ['SZC^#']:
-            # continue
+        # if sym not in ['TIBR']:
+        #     continue
         print(sym)
         aiex = IEX(sym)
         stocksEarnings = aiex.stocksEarnings()
@@ -38,6 +39,8 @@ def iex_database_update(alist):
 
 def finviz(alist):
     for sym in alist:
+        if sym not in ['HSDT']:
+            continue
         print(sym)
         f = Finviz()
         jobj = f.get_stat(sym)
@@ -46,9 +49,16 @@ def finviz(alist):
         # id = DB[sym].find_one({}, {"_id": 1})
         # DB[sym].update_one({"_id": ObjectId(id['_id'])}, {"$set": {'finviz': jobj}})
 
+def get_variables():
+    parser = argparse.ArgumentParser(description='Short sample app')
+    parser.add_argument('-t', '--type', type=str, help='data source', choices=("iex", "finviz"), required=True)
+    args = vars(parser.parse_args())
+    return args
+
 if __name__ == "__main__":
+    # adic = get_variables()
     iex = IEX()
     list_of_symbols = iex.symbols()
-    iex_database(list_of_symbols)
+    #iex_database(list_of_symbols)
     # iex_database_update(iex.symbols())
-    # finviz(list_of_symbols)
+    finviz(list_of_symbols)

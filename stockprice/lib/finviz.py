@@ -21,4 +21,4 @@ class Finviz:
 
 if __name__ == "__main__":
     f = Finviz()
-    print(f.get_stat('A'))
+    print(f.get_stat('HSDT'))

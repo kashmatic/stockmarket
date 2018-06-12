@@ -2,17 +2,18 @@ from pymongo import MongoClient
 from lib.iex import IEX
 from lib.iex_criteria import IexCriteria
 from lib.mongo_database import listTickers
-from lib.mariadb_database import MariadbDatabase
+# from lib.mariadb_database import MariadbDatabase
 
 from datetime import date as datetoday
 
 def load_database():
     iex = IEX()
-    maria = MariadbDatabase()
+    # maria = MariadbDatabase()
     for sym in listTickers():
         data = IexCriteria(sym)
         adic = insertobj()
         adic['sym'] = sym
+        print(data.get_marketcap())
         if data.get_marketcap():
             adic['marketCap'] = data.get_marketcap()
         else:
@@ -38,6 +39,7 @@ def load_database():
             adic['ratioPEforward'] = data.get_finvizpeforward()
         adic['date'] = datetoday.today().isoformat()
         # adic['date'] = '2018-03-20'
+        print(adic)
         adic = replaceNone(adic)
         sql = '''
         INSERT INTO `stocks`
@@ -46,7 +48,7 @@ def load_database():
         ('{sym}',{marketCap},{debt},{ratioDebtMarketcap},{cash},{sumNetIncome},{sharesOutstanding},{ratioPE},{ebitda},{ratioPEttm},{ratioPEforward},'{date}')
         '''.format(**adic)
         print(sql)
-        maria.execute(sql)
+        # maria.execute(sql)
         # CURSOR.execute(sql)
         # DB.commit()
 

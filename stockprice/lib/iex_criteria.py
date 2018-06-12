@@ -133,6 +133,8 @@ class IexCriteria:
 
     def get_netIncome(self):
         alist = []
+        if not self.stocksFinancials:
+            return None
         for report in self.stocksFinancials['financials']:
             if not report['netIncome']:
                 return None
