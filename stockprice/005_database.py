@@ -5,13 +5,14 @@ from lib.ticker_database import TickerDatabase
 import string
 import argparse
 
-def iex_database(alist):
+def iex_database(alist, fh):
     for sym in alist:
         # if not sym.startswith('IDT'):
         # if sym[0] not in list(b):
         # if sym not in ['TIBR']:
         #     continue
         print(sym)
+        fh.write('{}\n'.format(sym))
         aiex = IEX(sym)
         stocksEarnings = aiex.stocksEarnings()
         stocksFinancials = aiex.stocksFinancials(sym)
@@ -37,11 +38,12 @@ def iex_database_update(alist):
             upsert=True
             )
 
-def finviz(alist):
+def finviz(alist, fh):
     for sym in alist:
-        if sym not in ['HSDT']:
-            continue
+        # if sym not in ['HSDT']:
+        #     continue
         print(sym)
+        fh.write('{}\n'.format(sym))
         f = Finviz()
         jobj = f.get_stat(sym)
         td = TickerDatabase(sym)
@@ -56,9 +58,16 @@ def get_variables():
     return args
 
 if __name__ == "__main__":
-    # adic = get_variables()
+    adic = get_variables()
     iex = IEX()
     list_of_symbols = iex.symbols()
-    #iex_database(list_of_symbols)
-    # iex_database_update(iex.symbols())
-    finviz(list_of_symbols)
+    if adic['type'] == 'iex':
+        fh = open('iex.out', 'w')
+        iex_database(list_of_symbols, fh)
+        fh.close()
+    elif adic['type'] == 'finviz':
+        fh = open('finviz.out', 'w')
+        finviz(list_of_symbols, fh)
+        fh.close()
+    else:
+        print('ERROR: unknown data source')

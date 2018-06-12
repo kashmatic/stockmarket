@@ -31,9 +31,10 @@ class IEX:
             return None
 
     def symbols(self):
-        alist = self.symbols_list()
-        for item in alist:
-            yield item['symbol']
+        alist = []
+        for item in self.symbols_list():
+            alist.append(item['symbol'])
+        return alist
 
     def symbols_count(self):
         return len(self.symbols_list())
