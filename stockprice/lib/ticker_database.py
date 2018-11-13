@@ -1,7 +1,9 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-client = MongoClient("mongodb://localhost:27017/stocks")
+# client = MongoClient("mongodb://localhost:27017/stocks")
+
+from .mongo_database import client
 
 class TickerDatabase():
     def __init__(self, symbol):
