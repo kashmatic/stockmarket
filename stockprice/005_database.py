@@ -10,7 +10,7 @@ def iex_database(alist, fh):
         # if not sym.startswith('IDT'):
         # if sym[0] not in list(b):
         # if sym not in ['TIBR']:
-        if not sym.startswith('Z'):
+        if not sym.startswith('ZA'):
             continue
         print(sym)
         fh.write('{}\n'.format(sym))
@@ -41,8 +41,8 @@ def iex_database_update(alist):
 
 def finviz(alist, fh):
     for sym in alist:
-        # if sym not in ['HSDT']:
-        #     continue
+        if not sym.startswith('ZA'):
+            continue
         print(sym)
         fh.write('{}\n'.format(sym))
         f = Finviz()

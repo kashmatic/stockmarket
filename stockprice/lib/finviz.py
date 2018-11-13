@@ -1,9 +1,11 @@
 import requests
 
 import json
+import os
 
 class Finviz:
-    URL = "http://localhost:8080/finance/finviz/statistics"
+    # URL = "http://localhost:8080/finance/finviz/statistics"
+    URL = os.environ.get('FINVIZ_URI')
 
     def __init__(self):
         pass
