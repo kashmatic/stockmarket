@@ -1,6 +1,10 @@
 from pymongo import MongoClient
 
-client = MongoClient("mongodb://localhost:27017/stocks")
+import os
+
+#client = MongoClient("mongodb://localhost:27017/stocks")
+client = MongoClient(os.environ.get('DATABASE_URI'))
+
 db = client['stocks']
 
 def listTickers():
