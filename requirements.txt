@@ -16,7 +16,6 @@ itsdangerous==0.24
 Jinja2==2.10
 lxml==4.1.1
 MarkupSafe==1.0
-matplotlib==2.1.2
 multidict==4.1.0
 mysql-connector-python==8.0.6
 numpy==1.14.0
