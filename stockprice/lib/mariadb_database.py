@@ -1,12 +1,23 @@
 import mysql.connector as MS
 
-DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
+import os
+
+# DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
 # DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
+
+DB = MS.connect(
+    host=os.environ.get('MARIADB_HOST'),
+    user=os.environ.get('MARIADB_USER'),
+    passwd=os.environ.get('MARIADB_PASSWORD'),
+    database=os.environ.get('MARIADB_DBNAME'),
+    port=os.environ.get('MARIADB_PORT')
+)
+
 CURSOR = DB.cursor()
 
 class MariadbDatabase():
     def __init__(self):
-        pass
+        self.create_ticker_database('stocks')
 
     def execute(self, sql):
         try:
@@ -23,7 +34,7 @@ class MariadbDatabase():
 
     def create_ticker_database(self, tname):
         sql = '''
-        CREATE TABLE `{}` (
+        CREATE TABLE IF NOT EXISTS `{}` (
         `id` int(15) NOT NULL AUTO_INCREMENT,
         `ticker` varchar(11) NOT NULL,
         `marketCap` BIGINT unsigned,
