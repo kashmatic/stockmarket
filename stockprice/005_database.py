@@ -10,7 +10,8 @@ def iex_database(alist, fh):
         # if not sym.startswith('IDT'):
         # if sym[0] not in list(b):
         # if sym not in ['TIBR']:
-        #     continue
+        if not sym.startswith('Z'):
+            continue
         print(sym)
         fh.write('{}\n'.format(sym))
         aiex = IEX(sym)
