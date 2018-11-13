@@ -1,9 +1,12 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-# client = MongoClient("mongodb://localhost:27017/stocks")
+import os
 
-from .mongo_database import client
+# client = MongoClient("mongodb://localhost:27017/stocks")
+client = MongoClient(os.environ.get('MONGODB_URI'))
+
+# from .mongo_database import client
 
 class TickerDatabase():
     def __init__(self, symbol):
@@ -39,6 +42,7 @@ class TickerDatabase():
             self.db[self.symbol].insert({key: jobj})
 
     def put_stocksEarnings(self, jobj):
+        print(os.environ.get('MONGODB_URI'))
         self.add("stocksEarnings", jobj)
 
     def put_stocksKeyStats(self, jobj):

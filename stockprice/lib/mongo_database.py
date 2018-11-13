@@ -3,8 +3,8 @@ from pymongo import MongoClient
 import os
 
 #client = MongoClient("mongodb://localhost:27017/stocks")
-client = MongoClient(os.environ.get('DATABASE_URI'))
-print(os.environ.get('DATABASE_URI'))
+client = MongoClient(os.environ.get('MONGODB_URI'))
+print(os.environ.get('MONGODB_URI'))
 
 db = client['stocks']
 
