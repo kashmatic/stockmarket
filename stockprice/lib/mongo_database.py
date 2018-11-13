@@ -4,7 +4,7 @@ import os
 
 #client = MongoClient("mongodb://localhost:27017/stocks")
 client = MongoClient(os.environ.get('DATABASE_URI'))
-print(client)
+print(os.environ.get('DATABASE_URI'))
 
 db = client['stocks']
 
