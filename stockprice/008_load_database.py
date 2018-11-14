@@ -49,8 +49,8 @@ def load_database():
         '''.format(**adic)
         print(sql)
         maria.execute(sql)
-        CURSOR.execute(sql)
-        DB.commit()
+        # CURSOR.execute(sql)
+        # DB.commit()
 
 def insertobj():
     adic = dict(
