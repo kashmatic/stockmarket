@@ -6,7 +6,20 @@ from wtforms.validators import DataRequired
 
 import mysql.connector as MS
 # DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
-DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
+# DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
+
+import os
+
+# DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
+# DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
+
+DB = MS.connect(
+    host=os.environ.get('MARIADB_HOST'),
+    user=os.environ.get('MARIADB_USER'),
+    passwd=os.environ.get('MARIADB_PASSWORD'),
+    database=os.environ.get('MARIADB_DBNAME'),
+    port=os.environ.get('MARIADB_PORT')
+)
 
 CURSOR = DB.cursor()
 
