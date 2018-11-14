@@ -10,9 +10,6 @@ import mysql.connector as MS
 
 import os
 
-# DB = MS.connect(host="localhost", user="root", passwd="", database='stockmarket')
-# DB = MS.connect(host="localhost", user="root", passwd="J3sus0MA!!", database='stockmarket')
-
 DB = MS.connect(
     host=os.environ.get('MARIADB_HOST'),
     user=os.environ.get('MARIADB_USER'),
