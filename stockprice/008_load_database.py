@@ -37,8 +37,8 @@ def load_database():
             adic['ratioPEttm'] = data.get_finvizpettm()
         if data.get_finvizpeforward():
             adic['ratioPEforward'] = data.get_finvizpeforward()
-        adic['date'] = datetoday.today().isoformat()
-        # adic['date'] = '2018-03-20'
+        # adic['date'] = datetoday.today().isoformat()
+        adic['date'] = '2018-11-15'
         print(adic)
         adic = replaceNone(adic)
         sql = '''
